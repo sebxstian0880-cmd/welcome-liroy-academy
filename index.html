@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido - Liroy Estudio de Idiomas</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    body {
+      color: #f8fafc;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #090d16);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* PANTALLA DE ENTRADA CON REVELADO LENTO DE LETRAS */
+    #hero-welcome-screen {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .slow-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #f59e0b;
+      letter-spacing: 3px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: slowFadeLetter 3.5s forwards ease-in-out;
+      text-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .slow-subtitle {
+      font-size: 1.35rem;
+      color: #cbd5e1;
+      max-width: 750px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: slowFadeLetter 3.5s 1.5s forwards ease-in-out;
+    }
+
+    @keyframes slowFadeLetter {
+      0% { opacity: 0; transform: translateY(20px); filter: blur(8px); }
+      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    .scroll-down-btn {
+      margin-top: 3rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f8fafc;
+      padding: 0.8rem 2rem;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      opacity: 0;
+      animation: slowFadeLetter 2s 3s forwards ease-in-out;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .scroll-down-btn:hover { background: #2563eb; border-color: #2563eb; transform: translateY(-3px); }
+
+    /* ESTRUCTURA DE 3 COLUMNAS */
+    .landing-content-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      gap: 2rem;
+      max-width: 1350px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .landing-content-grid { grid-template-columns: 1fr; }
+    }
+
+    /* TARJETAS Y PANELES */
+    .info-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      color: #f59e0b;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .card-text { color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; }
+
+    /* FRASES MOTIVADORAS */
+    .quote-box {
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid #2563eb;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-style: italic;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+    }
+    .quote-box span { display: block; text-align: right; font-style: normal; font-weight: bold; color: #f59e0b; margin-top: 6px; }
+
+    /* FORMULARIO DE INSCRIPCIÓN */
+    .enrollment-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 2px solid #2563eb;
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      margin-top: 0.8rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      color: white;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.3s;
+    }
+    .form-input:focus { border-color: #f59e0b; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      background: #25d366;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .submit-btn:hover { background: #1eb854; transform: translateY(-2px); }
+
+    .direct-link-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .direct-link-btn:hover { color: #f8fafc; }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA PRINCIPAL: ANIMACIÓN SLOW -->
+  <section id="hero-welcome-screen">
+    <div style="font-size: 4rem; color: #f59e0b; margin-bottom: 1rem; opacity: 0; animation: slowFadeLetter 2s forwards ease-in-out;">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </div>
+    <h1 class="slow-title">BIENVENIDO A LIROY ESTUDIO DE IDIOMAS</h1>
+    <p class="slow-subtitle">
+      Esta academia está hecha para que puedas aprender distintos idiomas de forma fluida, dinámica y adaptada a tu ritmo. Abrimos las puertas al mundo para llevar tus metas al siguiente nivel.
+    </p>
+    <a href="#section-content" class="scroll-down-btn">Ver Más e Inscribirme ➔</a>
+  </section>
+
+  <!-- SECCIÓN DE CONTENIDO EN 3 COLUMNAS -->
+  <div id="section-content" class="landing-content-grid">
+
+    <!-- COLUMNA IZQUIERDA: EXPLICACIÓN Y SERVICIOS -->
+    <div>
+      <div class="info-card">
+        <div class="card-title"><i class="fa-solid fa-bullseye"></i> Nuestra Misión</div>
+        <p class="card-text">
+          En <strong>Liroy Estudio de Idiomas</strong> transformamos el aprendizaje en una experiencia 100% práctica. Te preparamos con las herramientas necesarias para dominar el idioma que elijas.
+        </p>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="fa-solid fa-earth-americas"></i> 8 Idiomas Globales</div>
+        <p class="card-text">
+          Ofrecemos formación en Inglés, Portugués, Francés, Ruso, Chino Mandarín, Italiano, Japonés y Alemán con guías estructuradas y profesores capacitados.
+        </p>
+      </div>
+    </div>
+
+    <!-- COLUMNA CENTRAL: FORMULARIO DE INSCRIPCIÓN -->
+    <div class="enrollment-card">
+      <h2 style="font-size: 1.8rem; color: #f8fafc; margin-bottom: 0.5rem;"><i class="fa-solid fa-pen-to-square" style="color: #f59e0b;"></i> Inscripciones Abiertas</h2>
+      <p style="color: #cbd5e1; font-size: 0.9rem;">Completa tus datos básicos e inicia tu inscripción directa por WhatsApp:</p>
+
+      <div style="text-align: left; margin-top: 1.5rem;">
+        <label style="font-size: 0.85rem; font-weight: bold; color: #f59e0b;">Tu Nombre Completo:</label>
+        <input type="text" id="enroll-name" class="form-input" placeholder="Ej: Carlos Mendoza">
+
+        <label style="font-size: 0.85rem; font-weight: bold; color: #f59e0b; margin-top: 1rem; display: block;">Tu Edad:</label>
+        <input type="number" id="enroll-age" class="form-input" placeholder="Ej: 18">
+
+        <label style="font-size: 0.85rem; font-weight: bold; color: #f59e0b; margin-top: 1rem; display: block;">Tu País de Residencia:</label>
+        <input type="text" id="enroll-country" class="form-input" placeholder="Ej: Venezuela, Colombia, México...">
+      </div>
+
+      <button class="submit-btn" onclick="enviarInscripcionWhatsApp()">
+        <i class="fa-brands fa-whatsapp"></i> Enviar Inscripción al Owner
+      </button>
+
+      <a href="https://sebxstian0880-cmd.github.io/liroy-estudio/" target="_blank" class="direct-link-btn">¿Ya eres estudiante? Entrar directo a la Plataforma Web</a>
+    </div>
+
+    <!-- COLUMNA DERECHA: FRASES MOTIVADORAS -->
+    <div>
+      <div class="info-card">
+        <div class="card-title"><i class="fa-solid fa-quote-left"></i> Inspiración</div>
+        
+        <div class="quote-box">
+          "Un idioma diferente es una visión diferente de la vida."
+          <span>— Federico Fellini</span>
+        </div>
+
+        <div class="quote-box">
+          "Los límites de mi lenguaje son los límites de mi mundo."
+          <span>— Ludwig Wittgenstein</span>
+        </div>
+
+        <div class="quote-box">
+          "Aprender otro idioma es como convertirse en una persona diferente."
+          <span>— Haruki Murakami</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function enviarInscripcionWhatsApp() {
+      const name = document.getElementById('enroll-name').value.trim();
+      const age = document.getElementById('enroll-age').value.trim();
+      const country = document.getElementById('enroll-country').value.trim();
+
+      if (!name || !age || !country) {
+        alert("Por favor completa todos los campos (Nombre, Edad y País).");
+        return;
+      }
+
+      const numeroOwner = "584125952360";
+      const mensaje = `📌 *NUEVA SOLICITUD DE INSCRIPCIÓN - ACADEMIA LIROY*\n\n` +
+                      `👤 *Nombre:* ${name}\n` +
+                      `🎂 *Edad:* ${age} años\n` +
+                      `🌎 *País:* ${country}\n\n` +
+                      `Deseo recibir información para formalizar mi ingreso a las clases.`;
+
+      window.open(`https://api.whatsapp.com/send?phone=${numeroOwner}&text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
