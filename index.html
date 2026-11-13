@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liroy Estudio de Idiomas — Plataforma Global</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e3a8a;
+      --accent: #d91e36;
+      --secondary: #f59e0b;
+      --dark: #071936;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius: 14px;
+      --shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.3);
+      --bg-gradient: radial-gradient(circle at top right, #0e2d5c, #040d1c);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glow: rgba(217, 30, 54, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--dark); background-image: var(--bg-gradient); color: #f8fafc; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 1.2s ease; }
+
+    #welcome-splash {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at center, #0f2347 0%, #030712 100%);
+      z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; color: white; transition: opacity 0.6s ease, visibility 0.6s; padding: 2rem;
+    }
+    .splash-icon { font-size: 5rem; color: #f59e0b; margin-bottom: 1.5rem; animation: splashBounce 2s infinite alternate ease-in-out; }
+    @keyframes splashBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-10px) scale(1.05); } }
+    .splash-title { font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .splash-subtitle { font-size: 1.25rem; color: #cbd5e1; font-weight: 400; max-width: 600px; }
+    .splash-loader { width: 220px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 2.5rem; overflow: hidden; }
+    .splash-bar { width: 100%; height: 100%; background: #f59e0b; animation: loadLine 4s linear forwards; }
+    @keyframes loadLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } }
+    
+    .skip-splash-btn {
+      margin-top: 2rem; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.6rem 1.4rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+    }
+    .skip-splash-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+    #promo-banner {
+      background: linear-gradient(135deg, #090d16, #1e3a8a, #d97706);
+      color: white; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 0.92rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .promo-tag { background: #f59e0b; color: #0f172a; padding: 3px 10px; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
+    .timer-badge { background: rgba(15, 23, 42, 0.85); padding: 5px 12px; border-radius: 8px; font-family: monospace; font-size: 1.05rem; color: #fef08a; border: 1px solid rgba(255,255,255,0.2); }
+
+    header {
+      background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(12px); color: white; padding: 1.1rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: var(--shadow); flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-size: 1.45rem; font-weight: 800; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .logo i { color: var(--secondary); font-size: 1.6rem; }
+    .logo span { color: var(--accent); }
+    .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); padding: 0.65rem 1.1rem;
+      border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
+    }
+    .tab-btn:hover, .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 15px var(--glow); }
+    .tab-btn.custom-btn { background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #0284c7; color: white; }
+    .tab-btn.owner-btn { background: linear-gradient(135deg, #d97706, #b45309); border-color: #d97706; color: white; }
+
+    .main-layout { display: flex; gap: 1.5rem; max-width: 1400px; margin: 2.5rem auto; padding: 0 1.5rem; align-items: flex-start; }
+    .container { flex: 1; min-width: 0; }
+    
+    .sidebar-students-wrapper { display: flex; align-items: flex-start; z-index: 100; }
+    .sidebar-toggle-btn {
+      background: #1e3a8a; color: white; border: 1px solid #334155;
+      padding: 0.9rem 1.1rem; border-radius: var(--radius); font-weight: bold; cursor: pointer;
+      display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); white-space: nowrap; transition: background 0.2s;
+    }
+    .sidebar-toggle-btn:hover { background: #2563eb; }
+    .sidebar-content-box {
+      max-width: 0; opacity: 0; overflow: hidden; transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+      background: #1e293b; border-radius: var(--radius); border: 1px solid #334155; box-shadow: var(--shadow); margin-left: 0;
+    }
+    .sidebar-content-box.open {
+      max-width: 280px; opacity: 1; padding: 1.2rem; margin-left: 10px; overflow-y: auto; max-height: 550px;
+    }
+    .student-list-item { background: #0f172a; padding: 9px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #334155; }
+    .student-name { font-weight: bold; font-size: 0.88rem; color: #f8fafc; }
+    .student-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-top: 4px; }
+
+    .portal-section { display: none; }
+    .portal-section.active { display: block; animation: fadeInPortal 0.3s ease; }
+    @keyframes fadeInPortal { from { opacity: 0; } to { opacity: 1; } }
+
+    .section-title {
+      font-size: 1.5rem; margin-bottom: 1.5rem; color: #f8fafc;
+      display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 700;
+    }
+
+    .languages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+    .lang-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--shadow); position: relative; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
+    .lang-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .lang-card.active { border-left: 6px solid var(--success); }
+    .lang-card.locked { opacity: 0.65; background: #0f172a; border-left: 6px solid var(--gray); }
+    .badge-status { position: absolute; top: 18px; right: 18px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-active { background: #dcfce7; color: var(--success); }
+    .badge-locked { background: #334155; color: #94a3b8; }
+
+    .btn {
+      display: inline-block; width: 100%; padding: 0.8rem; border: none; border-radius: 10px;
+      background: var(--accent); color: white; font-weight: 700; text-align: center; cursor: pointer;
+      margin-top: 1.2rem; text-decoration: none; font-size: 0.95rem; transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { opacity: 0.92; box-shadow: 0 0 15px var(--glow); }
+    .btn-disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
+    .btn-history { background: #2563eb; font-size: 0.85rem; padding: 0.6rem; margin-top: 10px; }
+
+    .modules-accordion { display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2.5rem; }
+    .folder-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--shadow); overflow: hidden; }
+    .folder-header { background: rgba(255,255,255,0.03); padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; color: #f8fafc; }
+    .folder-header:hover { background: rgba(255,255,255,0.08); }
+    .folder-content { display: none; padding: 1.8rem; background: #0f172a; border-top: 1px solid #334155; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+    .folder-content.open { display: grid; }
+    .classroom-box { background: #1e293b; padding: 1.4rem; border-radius: 12px; border: 1px solid #334155; text-align: center; }
+
+    .lb-folder-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.2rem; box-shadow: var(--shadow); overflow: hidden; }
+    .lb-folder-header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; }
+    .lb-folder-content { display: none; padding: 1.8rem; background: #0f172a; border-top: 1px solid #334155; }
+    .lb-folder-content.open { display: block; }
+    .levels-lb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+    .level-lb-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.2rem; }
+    .lb-top-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .lb-top-item { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 9px 12px; display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 500; color: #e2e8f0; }
+
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 1.5rem; backdrop-filter: blur(4px); }
+    .modal-card { background: #1e293b; color: #f8fafc; max-width: 650px; width: 100%; border-radius: 18px; padding: 2.5rem; max-height: 90vh; overflow-y: auto; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .option-btn { display: block; width: 100%; padding: 0.9rem 1rem; margin: 0.6rem 0; background: #0f172a; border: 1px solid #334155; color: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 0.98rem; font-weight: 500; transition: background 0.2s; }
+    .option-btn:hover { background: #334155; }
+
+    .feedback-box { margin-top: 1.2rem; padding: 1.3rem; border-radius: 12px; display: none; font-size: 0.98rem; }
+    .feedback-box.correct { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid #16a34a; }
+    .feedback-box.incorrect { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #dc2626; }
+
+    .input-pass, .input-text-pro { width: 100%; padding: 0.75rem 1rem; border: 1px solid #334155; border-radius: 10px; margin-top: 0.6rem; font-size: 0.95rem; background: #0f172a; color: #fff; }
+    .input-pass:focus, .input-text-pro:focus { outline: none; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- ANIMACIÓN DE ENTRADA -->
+  <div id="welcome-splash">
+    <div class="splash-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <h1 class="splash-title">Liroy Estudio de Idiomas</h1>
+    <p class="splash-subtitle">Bienvenido a la Excelencia Académica y Global</p>
+    <div class="splash-loader"><div class="splash-bar"></div></div>
+    <button class="skip-splash-btn" onclick="quitarSplash()">Omitir Animación ➔</button>
+  </div>
+
+  <!-- BANNER PROMO -->
+  <div id="promo-banner">
+    <div><span class="promo-tag">OFERTA ESPECIAL</span> 30 minutos de Clase GRATIS</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="timer-badge" id="week-timer-display">OFFLINE (00d : 00h : 00m : 00s)</div>
+      <button onclick="iniciarQuizPrueba()" style="background: #f59e0b; color: #0f172a; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;">Probar Quiz Prueba (12 Pts)</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo" onclick="cambiarPortal('estudiantes')"><i class="fa-solid fa-graduation-cap"></i> Liroy <span>Estudio</span></div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="cambiarPortal('estudiantes')"><i class="fa-solid fa-user-graduate"></i> Estudiantes</button>
+      <button class="tab-btn custom-btn" onclick="abrirAccesoClasesPersonalizadas()"><i class="fa-solid fa-user-lock"></i> Clases Personalizadas</button>
+      <button class="tab-btn" onclick="cambiarPortal('perfil')"><i class="fa-solid fa-id-card"></i> Mi Perfil (Rol)</button>
+      <button class="tab-btn" onclick="cambiarPortal('speaking')"><i class="fa-solid fa-comments"></i> Speaking Zone</button>
+      <button class="tab-btn" onclick="cambiarPortal('certificados')"><i class="fa-solid fa-award"></i> Certificados</button>
+      <button class="tab-btn" onclick="abrirLoginProfesor()"><i class="fa-solid fa-chalkboard-user"></i> Profesores</button>
+      <button class="tab-btn owner-btn" onclick="abrirLoginOwner()"><i class="fa-solid fa-crown"></i> Owner</button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    
+    <!-- CARPETA DESPLEGABLE LATERAL IZQUIERDA -->
+    <div class="sidebar-students-wrapper">
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarStudents()">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Directorio Alumnos</span>
+        <i class="fa-solid fa-chevron-right" id="sidebar-chevron"></i>
+      </button>
+      <div class="sidebar-content-box" id="sidebarStudentsBox">
+        <h4 style="color:#f8fafc; font-size:0.95rem; margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:5px;">👥 Alumnos Registrados</h4>
+        <div id="students-directory-list"></div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- PORTAL ESTUDIANTES / IDIOMAS -->
+      <div id="portal-estudiantes" class="portal-section active">
+        <section style="margin-bottom: 2.5rem; background: linear-gradient(135deg, #1e293b, #1e3a8a); color: white; padding: 2.2rem; border-radius: var(--radius); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border: 1px solid #334155;">
+          <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-vial"></i> 1. Quiz de Prueba (12 Pts)</h3>
+            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 12px;">Para medir tu nivel sin compromiso.</p>
+            <button class="btn" id="btn-quiz-prueba" style="background: #f59e0b; color: #0f172a;" onclick="iniciarQuizPrueba()"><i class="fa-solid fa-play"></i> Iniciar Quiz Prueba</button>
+          </div>
+          <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-award"></i> 2. Quiz Evaluativo de Nivel (12 Pts)</h3>
+            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 12px;">Para subir tu puntuación formal al perfil.</p>
+            <button class="btn" id="btn-quiz-nivel" style="background: #16a34a;" onclick="iniciarQuizNivel()"><i class="fa-solid fa-graduation-cap"></i> Iniciar Quiz de Nivel</button>
+          </div>
+        </section>
+
+        <!-- 8 IDIOMAS CON BANDERAS Y ACCESO CON CONTRASEÑA -->
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-globe"></i> Cursos e Idiomas Disponibles (8 Idiomas)</h2>
+          <div class="languages-grid" id="languages-grid-container">
+            <!-- Renderizado dinámico controlado por el Owner y contraseñas -->
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-folder-tree"></i> Módulos de Aprendizaje (<span id="current-lang-title">Inglés</span>)</h2>
+          <div class="modules-accordion" id="modulesContainer"></div>
+        </section>
+
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-trophy"></i> Leaderboards por Módulo (Top 3)</h2>
+          <div id="leaderboardsFoldersContainer"></div>
+        </section>
+      </div>
+
+      <!-- CLASES PERSONALIZADAS VIP -->
+      <div id="portal-personalizadas" class="portal-section">
+        <div style="background: linear-gradient(135deg, #1e293b, #0369a1); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2rem; border: 1px solid #334155; text-align: center;">
+          <h2 style="color: #f8fafc; font-size: 1.8rem; margin-bottom: 10px;"><i class="fa-solid fa-user-lock"></i> Clases Personalizadas VIP a Medida</h2>
+          <p style="color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 0.95rem;">Configura tu plan personalizado seleccionando idioma, cupo de personas, fecha de inicio y calcula tu tarifa estimada en USD antes de enviarla directo al WhatsApp del Owner.</p>
+        </div>
+
+        <div style="background: #1e293b; padding: 2.5rem; border-radius: var(--radius); border: 1px solid #334155; max-width: 750px; margin: auto;">
+          <h3 style="margin-bottom: 15px; color: #38bdf8;"><i class="fa-solid fa-gear"></i> Formulario de Configuración VIP</h3>
+          
+          <label style="font-weight:600; font-size:0.9rem;">Idioma deseado:</label>
+          <select id="custom-form-lang" class="input-pass" style="margin-bottom: 12px;">
+            <option value="Inglés">Inglés</option>
+            <option value="Portugués">Portugués</option>
+            <option value="Francés">Francés</option>
+          </select>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Tu País:</label>
+              <input type="text" id="custom-form-country" class="input-pass" placeholder="Ej: Venezuela, Colombia...">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Tu Edad:</label>
+              <input type="number" id="custom-form-age" class="input-pass" placeholder="Ej: 15">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Máximo de personas:</label>
+              <input type="number" id="custom-form-people" class="input-pass" value="1" min="1">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Fecha de Inicio:</label>
+              <input type="date" id="custom-form-startdate" class="input-pass">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Días por semana:</label>
+              <select id="custom-form-days" class="input-pass">
+                <option value="2">2 días por semana</option>
+                <option value="3">3 días por semana</option>
+                <option value="5">5 días por semana (Intensivo)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Horas por sesión (Máx 2h):</label>
+              <select id="custom-form-hours" class="input-pass">
+                <option value="1">1 hora</option>
+                <option value="1.5">1.5 horas</option>
+                <option value="2">2 horas</option>
+              </select>
+            </div>
+          </div>
+
+          <label style="font-weight:600; font-size:0.9rem;">Enfoque / Objetivos:</label>
+          <textarea id="custom-form-focus" class="input-text-pro" rows="2" placeholder="Ej: Conversación fluida, viajes, negocios..."></textarea>
+
+          <button class="btn" style="background: #0284c7; margin-top: 1.5rem; font-size: 1.05rem;" onclick="calcularYEnviarCustomWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Calcular Tarifa y Enviar al WhatsApp del Owner</button>
+        </div>
+      </div>
+
+      <!-- MI PERFIL -->
+      <div id="portal-perfil" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow); border: 1px solid #334155; max-width: 750px; margin: auto;">
+          <div style="display: flex; align-items: center; gap: 24px; border-bottom: 2px solid #334155; padding-bottom: 1.8rem; flex-wrap: wrap;">
+            <div id="profile-photo-container" style="width: 90px; height: 90px; background: #0f172a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; overflow: hidden; border: 3px solid var(--accent);">
+              <span id="profile-initial">U</span>
+            </div>
+            <div>
+              <h2 id="profile-name-display" style="font-size: 1.6rem; color: #f8fafc;">Estudiante Liroy</h2>
+              <p style="color: #94a3b8; margin-top: 4px;" id="profile-desc-display">Sin descripción</p>
+              <div id="profile-insignia-tag" style="margin-top: 6px;"></div>
+              <button class="btn" style="width: auto; padding: 0.5rem 1.2rem; font-size: 0.85rem; margin-top: 10px;" onclick="abrirConfigPerfil()"><i class="fa-solid fa-gear"></i> Configurar Perfil</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.8rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent);">
+            <h4 style="color: #38bdf8; margin-bottom: 6px;"><i class="fa-solid fa-shield-halved"></i> Idioma y Rol Asignado</h4>
+            <p style="font-size: 0.95rem; color: #cbd5e1;">Actualmente estás cursando:</p>
+            <h3 id="profile-assigned-language" style="font-size: 1.4rem; color: #f8fafc; margin-top: 4px;">⭐ Inglés (Controlado por el Owner)</h3>
+            <p style="font-size: 0.75rem; color: #64748b; margin-top: 8px;">* El Owner gestiona tu rol e idioma activo desde su Panel Supremo.</p>
+          </div>
+
+          <h3 style="margin-top: 1.8rem; color: #f8fafc; font-size: 1.2rem;"><i class="fa-solid fa-chart-line"></i> Progreso de Quizzes</h3>
+          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; margin-top: 12px; border: 1px solid #334155;">
+            <p style="font-size: 1rem;"><strong>Quiz de Prueba:</strong> <span id="profile-score-prueba" style="color:#f59e0b; font-weight:bold;">0 / 12 Pts</span></p>
+            <p style="font-size: 1rem; margin-top: 6px;"><strong>Quiz de Nivel:</strong> <span id="profile-score-nivel" style="color:#4ade80; font-weight:bold;">0 / 12 Pts</span></p>
+          </div>
+
+          <div style="margin-top: 2rem; background: linear-gradient(135deg, #0f172a, #1e3a8a); padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+            <h4><i class="fa-solid fa-folder-plus" style="color:#f59e0b;"></i> ¿Quieres tu Carpeta de Perfil Oficial?</h4>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 8px 0;">Envía tu formulario directo al WhatsApp del Owner (+584125952360) para asignarte tu insignia.</p>
+            <button class="btn" style="background: #25d366;" onclick="solicitarCarpetaPerfilWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Solicitar Carpeta al Owner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEAKING ZONE & CERTIFICADOS -->
+      <div id="portal-speaking" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; max-width: 750px; margin: auto; border: 1px solid #334155;">
+          <h2 class="section-title"><i class="fa-solid fa-comments"></i> Speaking Zone - Foro de Opinión</h2>
+          <textarea id="speaking-text-msg" class="input-text-pro" rows="4" placeholder="Escribe tu práctica o mensaje para el Owner aquí..."></textarea>
+          <button class="btn" style="background: #25d366; font-size: 1.05rem;" onclick="enviarMensajeWhatsAppDirecto()"><i class="fa-brands fa-whatsapp"></i> Enviar Mensaje Directo al Owner (+584125952360)</button>
+        </div>
+      </div>
+
+      <div id="portal-certificados" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; border: 1px solid #334155; text-align: center; max-width: 650px; margin: auto;">
+          <i class="fa-solid fa-award" style="font-size: 3.5rem; color: #d97706; margin-bottom: 1rem;"></i>
+          <h2>Solicitud de Certificado Oficial</h2>
+          <input type="text" id="cert-code-input" class="input-pass" placeholder="Clave del certificado (CERT-OWNER-2026)">
+          <input type="text" id="cert-full-name" class="input-pass" placeholder="Tu nombre completo">
+          <button class="btn" style="background: #d97706;" onclick="procesarCertificado()">Solicitar Diploma</button>
+          <div id="cert-announcement-box" style="display:none; margin-top:15px; color:#f59e0b;">🎉 ¡Certificado Solicitado con Éxito! Envía captura al Owner.</div>
+        </div>
+      </div>
+
+      <!-- PANEL PROFESORES -->
+      <div id="portal-profesores" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; max-width: 800px; margin: auto; border: 1px solid #334155;">
+          <h2 class="section-title"><i class="fa-solid fa-chalkboard-user"></i> Panel Docente</h2>
+          
+          <div style="margin-bottom:15px; background:#0f172a; padding:1rem; border-radius:10px; border:1px solid #334155;">
+            <label style="font-weight:700; font-size:0.9rem; color:#f59e0b;">Tipo de clase a gestionar:</label>
+            <select id="teacher-target-type" class="input-pass" style="margin-top:5px;">
+              <option value="normal">Clases Normales Estándar</option>
+              <option value="custom">Clases Personalizadas VIP</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+              <label style="font-weight:700; font-size:0.9rem;">Módulo:</label>
+              <select id="teacher-mod-select" class="input-pass" style="margin-top:5px;"></select>
+            </div>
+            <div>
+              <label style="font-weight:700; font-size:0.9rem;">Nivel:</label>
+              <select id="teacher-lvl-select" class="input-pass" style="margin-top:5px;">
+                <option value="A1">Nivel A1</option><option value="A2">Nivel A2</option><option value="B1">Nivel B1</option>
+                <option value="B2">Nivel B2</option><option value="C1">Nivel C1</option><option value="C2">Nivel C2</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
+            <label style="font-weight:700; font-size:0.9rem;">Contraseña de Clase:</label>
+            <input type="text" id="teacher-mod-pass" class="input-pass" placeholder="Ej: MOD3-A1-SECURE">
+            <button class="btn" style="margin-top:8px;" onclick="guardarClaveClase()">Guardar Contraseña</button>
+          </div>
+
+          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
+            <label style="font-weight:700; font-size:0.9rem;">Link de Meet:</label>
+            <input type="text" id="teacher-meet-url" class="input-pass" placeholder="https://meet.google.com/xxx-xxxx-xxx">
+            <button class="btn" style="margin-top:8px;" onclick="guardarMeetClase()">Guardar Meet</button>
+          </div>
+
+          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
+            <label style="font-weight:700; font-size:0.9rem;">Subir Clase Grabada (Máx 3 Horas):</label>
+            <input type="file" id="teacher-class-file" accept="video/*" class="input-pass" style="margin-top:5px; background:#1e293b;">
+            <button class="btn" style="background:#2563eb; margin-top:8px;" onclick="subirVideoHistorialArchivo()">Publicar Video</button>
+          </div>
+
+          <div style="background: #0f172a; padding: 1.8rem; border-radius: 12px; border: 1px solid #334155;">
+            <h3 style="color: #f8fafc; margin-bottom: 0.5rem;"><i class="fa-solid fa-folder-open" style="color: #f59e0b;"></i> Carpetas de Evaluación Docente</h3>
+            <button class="btn" style="background: #16a34a; width: auto; margin-bottom: 1.2rem;" onclick="abrirModalCrearCarpeta()"><i class="fa-solid fa-folder-plus"></i> Crear Nueva Carpeta</button>
+            <div id="teacher-folders-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL OWNER SUPREMO (CON CONTRASEÑA liroy2026) -->
+      <div id="portal-owner" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; border: 2px solid #f59e0b; max-width: 950px; margin: auto;">
+          <h2 class="section-title"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Panel Owner Supremo (Control Absoluto)</h2>
+          
+          <!-- ACTIVAR / DESACTIVAR IDIOMAS Y PORTALES -->
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3><i class="fa-solid fa-toggle-on"></i> Activar / Desactivar Portales de Idiomas</h3>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:10px;">Enciende o apaga los 8 portales de idiomas disponibles en la academia.</p>
+            <div id="owner-languages-toggle-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:10px;"></div>
+          </div>
+
+          <!-- ASIGNAR ROL / IDIOMA A ESTUDIANTE -->
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3><i class="fa-solid fa-user-shield"></i> Asignar Idioma Activo al Estudiante</h3>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:10px;">Define qué idioma cursa el estudiante en su perfil oficial.</p>
+            <select id="owner-assign-lang-select" class="input-pass" style="margin-bottom:10px;">
+              <option value="Inglés (USA)">Inglés (USA)</option>
+              <option value="Portugués (Brasil)">Portugués (Brasil)</option>
+              <option value="Francés (Francia)">Francés (Francia)</option>
+            </select>
+            <button class="btn" style="background:#d97706;" onclick="ownerGuardarIdiomaEstudiante()">Actualizar Rol en Perfil</button>
+          </div>
+
+          <!-- GESTIÓN DE MÓDULOS -->
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3><i class="fa-solid fa-folder-plus"></i> Gestión de Módulos (Agregar y Conmutar)</h3>
+            <button class="btn" style="background:#16a34a; width:auto; margin-bottom:15px;" onclick="agregarNuevoModuloOwner()"><i class="fa-solid fa-plus"></i> Agregar Módulo Adicional</button>
+            <div id="owner-modules-toggle-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px;"></div>
+          </div>
+
+          <!-- CREAR Y ELIMINAR CARPETAS OFICIALES DE ALUMNOS -->
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3><i class="fa-solid fa-id-card"></i> Carpetas de Perfil Oficial de Alumnos</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+              <input type="text" id="owner-student-name" class="input-pass" placeholder="Nombre del alumno">
+              <input type="text" id="owner-student-desc" class="input-pass" placeholder="Descripción">
+              <select id="owner-student-level" class="input-pass">
+                <option value="Nivel A1">Nivel A1</option><option value="Nivel A2">Nivel A2</option>
+                <option value="Nivel B1">Nivel B1</option><option value="Nivel B2">Nivel B2</option>
+              </select>
+              <input type="text" id="owner-student-badge" class="input-pass" placeholder="Insignia (Ej: 🥇 Destacado)">
+            </div>
+            <button class="btn" style="background:#16a34a; margin-bottom:15px;" onclick="crearCarpetaPerfilAlumnoOwner()">Crear Perfil Oficial</button>
+            <div id="owner-official-students-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <!-- CAMBIAR CLAVES GLOBALES -->
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3><i class="fa-solid fa-key"></i> Cambiar Contraseñas Maestras</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+              <div>
+                <input type="text" id="input-new-owner-pass" class="input-pass" placeholder="Nueva clave Owner">
+                <button class="btn" style="background:#d97706; margin-top:5px;" onclick="cambiarClaveOwner()">Actualizar Owner</button>
+              </div>
+              <div>
+                <input type="text" id="input-new-prof-pass" class="input-pass" placeholder="Nueva clave Profesores">
+                <button class="btn" style="background:#2563eb; margin-top:5px;" onclick="cambiarClaveProfesorGlobal()">Actualizar Profesores</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODALS DE CONTRASEÑA POR IDIOMA -->
+  <div class="modal-overlay" id="modalPasswordIdioma">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3 id="modal-idioma-title" style="color:#38bdf8;">🔐 Acceso Protegido</h3>
+      <p style="font-size:0.85rem; color:#94a3b8; margin:8px 0;">Ingresa la contraseña para entrar a este portal:</p>
+      <input type="password" id="input-idioma-pass" class="input-pass" placeholder="••••••••">
+      <button class="btn" onclick="verificarPasswordIdioma()">Entrar al Portal</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- MODALS GENERALES -->
+  <div class="modal-overlay" id="configPerfilModal">
+    <div class="modal-card" style="max-width:450px;">
+      <h3><i class="fa-solid fa-id-card"></i> Configurar mi Perfil</h3>
+      <label style="font-size:0.9rem; font-weight:600;">Nombre:</label>
+      <input type="text" id="input-edit-name" class="input-pass">
+      <label style="font-size:0.9rem; font-weight:600; margin-top:8px; display:block;">Descripción Personal:</label>
+      <input type="text" id="input-edit-desc" class="input-pass">
+      <div style="margin-top:12px;">
+        <label><input type="checkbox" id="input-edit-private"> 🔒 Mantener mi Perfil Privado en el Directorio</label>
+      </div>
+      <button class="btn" onclick="guardarPerfilEstudiante()">Guardar Cambios</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="quizModal">
+    <div class="modal-card" id="quizCard">
+      <h3 id="quizProgress">Pregunta 1</h3>
+      <p id="questionText" style="font-size: 1.1rem; margin: 1rem 0; font-weight:600;"></p>
+      <div id="optionsContainer"></div>
+      <div id="feedbackBox" class="feedback-box"></div>
+      <button id="btnNextQuestion" class="btn" style="display:none;" onclick="siguientePregunta()">Siguiente ➔</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginProfesorModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Acceso Profesores</h3>
+      <input type="text" id="prof-fullname-input" class="input-pass" placeholder="Nombre y Apellido">
+      <input type="password" id="prof-pass-input" class="input-pass" placeholder="Clave Docente">
+      <button class="btn" onclick="loginProfesor()">Entrar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginCustomModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Clases Personalizadas VIP</h3>
+      <input type="password" id="custom-pass-input" class="input-pass" placeholder="Clave Custom (CUSTOM2026)">
+      <button class="btn" style="background:#0284c7;" onclick="verificarLoginCustom()">Ingresar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginOwnerModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Login Owner Supremo</h3>
+      <input type="password" id="owner-pass-input" class="input-pass" placeholder="Clave Owner (liroy2026)">
+      <button class="btn" style="background:#d97706;" onclick="loginOwner()">Entrar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    const listaPalabrasOfensivas = ["politica", "partido", "presidente", "gobierno", "groseria", "sexo", "maduro", "chavez", "oposicion", "puto", "puta", "mierda", "coño", "maldito", "carajo"];
+    function filtrarTextoConAsteriscos(texto) {
+      if (!texto) return "";
+      let textoFiltrado = texto;
+      listaPalabrasOfensivas.forEach(palabra => {
+        const regex = new RegExp(palabra, "gi");
+        textoFiltrado = textoFiltrado.replace(regex, "*****");
+      });
+      return textoFiltrado;
+    }
+
+    let totalModulos = parseInt(localStorage.getItem('liroy_total_modulos') || '9');
+    let claveOwnerGlobal = localStorage.getItem('claveOwnerGlobal') || "liroy2026";
+    let claveProfesorGlobal = localStorage.getItem('claveProfesorGlobal') || "PROFESOR2026";
+    let claveCustomGlobal = localStorage.getItem('claveCustomGlobal') || "CUSTOM2026";
+    
+    let passwordsIdiomas = JSON.parse(localStorage.getItem('liroy_pass_idiomas') || '{"en":"ingles2026","pt":"portugues2026","fr":"frances2026"}');
+    let lenguasEstado = JSON.parse(localStorage.getItem('liroy_lenguas_estado') || '{"en":true,"pt":true,"fr":true,"ru":false,"cn":false,"it":false,"jp":false,"de":false}');
+
+    let idiomaSeleccionadoPendiente = null;
+    let idiomaActualActivo = 'en';
+
+    let listaProfesores = JSON.parse(localStorage.getItem('listaProfesores') || '[]');
+    let listaAlumnosOficiales = JSON.parse(localStorage.getItem('liroy_alumnos_oficiales') || '[]');
+    let teacherFolders = JSON.parse(localStorage.getItem('liroy_teacher_folders') || '[]');
+    let modulosInhabilitados = JSON.parse(localStorage.getItem('modulosInhabilitados') || '{}');
+    let datosClasesNormales = JSON.parse(localStorage.getItem('datosClasesNormales') || '{}');
+    const niveles = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+    function quitarSplash() {
+      const splash = document.getElementById('welcome-splash');
+      if(splash && splash.style.display !== 'none') {
+        splash.style.opacity = '0';
+        setTimeout(() => { splash.style.display = 'none'; }, 600);
+      }
+    }
+    window.addEventListener('load', () => { setTimeout(quitarSplash, 4000); });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      pobladorSelectsModulos();
+      renderizarGrillaIdiomas();
+      renderizarModulosNormales();
+      renderizarLeaderboards();
+      cargarPerfil();
+      renderizarDirectorioAlumnos();
+      actualizarEstadoBotonesQuiz();
+    });
+
+    function renderizarGrillaIdiomas() {
+      const grid = document.getElementById('languages-grid-container');
+      if(!grid) return;
+      grid.innerHTML = '';
+
+      const idiomasInfo = [
+        { id: 'en', name: '🇺🇸 🇬🇧 Inglés Liroy', desc: 'Portal principal, módulos, exámenes y clases.' },
+        { id: 'pt', name: '🇧🇷 🇵🇹 Portugués Liroy', desc: 'Portal de Portugués con contraseña y tema verde.' },
+        { id: 'fr', name: '🇫🇷 Francés Liroy', desc: 'Portal de Francés con contraseña y tema azul/rojo.' },
+        { id: 'ru', name: '🇷🇺 Ruso', desc: 'Próximamente disponible.' },
+        { id: 'cn', name: '🇨🇳 Chino Mandarín', desc: 'Próximamente disponible.' },
+        { id: 'it', name: '🇮🇹 Italiano', desc: 'Próximamente disponible.' },
+        { id: 'jp', name: '🇯🇵 Japonés', desc: 'Próximamente disponible.' },
+        { id: 'de', name: '🇩🇪 Alemán', desc: 'Próximamente disponible.' }
+      ];
+
+      idiomasInfo.forEach(item => {
+        const isActive = lenguasEstado[item.id];
+        let cardClass = isActive ? 'lang-card active' : 'lang-card locked';
+        let badgeHTML = isActive ? '<span class="badge-status badge-active">Protegido / Activo</span>' : '<span class="badge-status badge-locked">Próximamente</span>';
+        let btnHTML = isActive ? `<button class="btn" onclick="seleccionarIdiomaPortal('${item.id}')">Entrar a ${item.name.split(' ')[1]}</button>` : `<button class="btn btn-disabled" disabled>Bloqueado</button>`;
+        
+        if(item.id === 'pt' && isActive) {
+          cardClass = 'lang-card active';
+        } else if(item.id === 'fr' && isActive) {
+          cardClass = 'lang-card active';
+        }
+
+        grid.innerHTML += `
+          <div class="${cardClass}">
+            ${badgeHTML}
+            <h3>${item.name}</h3>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 6px;">${item.desc}</p>
+            ${btnHTML}
+          </div>
+        `;
+      });
+    }
+
+    function seleccionarIdiomaPortal(id) {
+      idiomaSeleccionadoPendiente = id;
+      const nombres = { en: 'Inglés Liroy', pt: 'Portugués Liroy', fr: 'Francés Liroy', ru: 'Ruso', cn: 'Chino Mandarín', it: 'Italiano', jp: 'Japonés', de: 'Alemán' };
+      document.getElementById('modal-idioma-title').innerText = `🔐 Contraseña para ${nombres[id]}`;
+      document.getElementById('input-idioma-pass').value = '';
+      document.getElementById('modalPasswordIdioma').style.display = 'flex';
+    }
+
+    function verificarPasswordIdioma() {
+      const pass = document.getElementById('input-idioma-pass').value;
+      const id = idiomaSeleccionadoPendiente;
+      const passReal = passwordsIdiomas[id] || (id === 'en' ? 'ingles2026' : id === 'pt' ? 'portugues2026' : 'frances2026');
+
+      if(pass === passReal) {
+        cerrarModales();
+        idiomaActualActivo = id;
+        
+        // Cambio dinámico de colores y temas de fondo por idioma
+        if(id === 'en') {
+          document.documentElement.style.setProperty('--dark', '#071936');
+          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #0e2d5c, #040d1c)');
+          document.documentElement.style.setProperty('--accent', '#d91e36');
+          document.documentElement.style.setProperty('--glow', 'rgba(217, 30, 54, 0.45)');
+          document.getElementById('current-lang-title').innerText = 'Inglés';
+        } else if(id === 'pt') {
+          document.documentElement.style.setProperty('--dark', '#032b16');
+          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #064e28, #02170c)');
+          document.documentElement.style.setProperty('--accent', '#eab308');
+          document.documentElement.style.setProperty('--glow', 'rgba(234, 179, 8, 0.45)');
+          document.getElementById('current-lang-title').innerText = 'Portugués (Brasil)';
+        } else if(id === 'fr') {
+          document.documentElement.style.setProperty('--dark', '#081436');
+          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #112663, #04091a)');
+          document.documentElement.style.setProperty('--accent', '#ef4444');
+          document.documentElement.style.setProperty('--glow', 'rgba(239, 68, 68, 0.45)');
+          document.getElementById('current-lang-title').innerText = 'Francés (Francia)';
+        }
+
+        alert(`✅ ¡Acceso concedido al Portal de ${id.toUpperCase()} con todo el contenido activo!`);
+      } else {
+        alert('❌ Contraseña incorrecta.');
+      }
+    }
+
+    function pobladorSelectsModulos() {
+      const selProf = document.getElementById('teacher-mod-select');
+      if(selProf) selProf.innerHTML = ''; 
+      for(let i=1; i<=totalModulos; i++) {
+        if(selProf) selProf.innerHTML += `<option value="${i}">Módulo ${i}</option>`;
+      }
+    }
+
+    function cerrarModales() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+    function cambiarPortal(p) {
+      document.querySelectorAll('.portal-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(`portal-${p}`).classList.add('active');
+    }
+
+    function toggleSidebarStudents() {
+      const box = document.getElementById('sidebarStudentsBox');
+      const chev = document.getElementById('sidebar-chevron');
+      box.classList.toggle('open');
+      chev.className = box.classList.contains('open') ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right";
+    }
+
+    function renderizarDirectorioAlumnos() {
+      const container = document.getElementById('students-directory-list');
+      if(!container) return;
+      container.innerHTML = '';
+      const miPerfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{"nombre":"Estudiante Liroy","privado":false}');
+      
+      if(miPerfil.privado) {
+        container.innerHTML += `<div class="student-list-item"><div class="student-name">🔒 Perfil Privado</div><span class="student-badge" style="background:#334155;">Estudiante</span></div>`;
+      } else {
+        container.innerHTML += `<div class="student-list-item"><div class="student-name">👤 ${miPerfil.nombre}</div><span class="student-badge" style="background:#2563eb;">${miPerfil.desc || 'Estudiante'}</span></div>`;
+      }
+
+      listaAlumnosOficiales.forEach(st => {
+        container.innerHTML += `<div class="student-list-item"><div class="student-name">⭐ ${st.nombre}</div><span class="student-badge" style="background:#16a34a;">${st.nivel}</span></div>`;
+      });
+    }
+
+    function cargarPerfil() {
+      const perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{"nombre":"Estudiante Liroy","desc":"Sin descripción","scorePrueba":0,"scoreNivel":0,"privado":false,"idiomaAsignado":"Inglés (USA)"}');
+      document.getElementById('profile-name-display').innerText = perfil.nombre;
+      document.getElementById('profile-desc-display').innerText = perfil.desc;
+      document.getElementById('profile-score-prueba').innerText = `${perfil.scorePrueba || 0} / 12 Pts`;
+      document.getElementById('profile-score-nivel').innerText = `${perfil.scoreNivel || 0} / 12 Pts`;
+      document.getElementById('profile-assigned-language').innerText = `⭐ ${perfil.idiomaAsignado || 'Inglés (USA)'}`;
+      if(perfil.insignia) {
+        document.getElementById('profile-insignia-tag').innerHTML = `<span style="background:#d97706; color:white; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:bold;">${perfil.insignia}</span>`;
+      }
+    }
+
+    function abrirConfigPerfil() {
+      const perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+      document.getElementById('input-edit-name').value = perfil.nombre || '';
+      document.getElementById('input-edit-desc').value = perfil.desc || '';
+      document.getElementById('input-edit-private').checked = !!perfil.privado;
+      document.getElementById('configPerfilModal').style.display = 'flex';
+    }
+
+    function guardarPerfilEstudiante() {
+      let name = filtrarTextoConAsteriscos(document.getElementById('input-edit-name').value.trim());
+      let desc = filtrarTextoConAsteriscos(document.getElementById('input-edit-desc').value.trim());
+      const esPrivado = document.getElementById('input-edit-private').checked;
+
+      let perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+      perfil.nombre = name || "Estudiante Liroy";
+      perfil.desc = desc;
+      perfil.privado = esPrivado;
+      localStorage.setItem('perfilUsuarioLocal', JSON.stringify(perfil));
+
+      cargarPerfil();
+      renderizarDirectorioAlumnos();
+      cerrarModales();
+    }
+
+    function solicitarCarpetaPerfilWhatsApp() {
+      const perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+      const msg = `Hola Owner, quiero mi Carpeta de Perfil Oficial:\n\n- Nombre: ${perfil.nombre || 'Sin definir'}\n- Descripción: ${perfil.desc || 'Sin definir'}`;
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function renderizarModulosNormales() {
+      const container = document.getElementById('modulesContainer');
+      if(!container) return;
+      container.innerHTML = '';
+      for (let m = 1; m <= totalModulos; m++) {
+        if(modulosInhabilitados[m]) continue;
+        let html = `<div class="folder-card"><div class="folder-header" onclick="toggleFolder('mod${m}')"><span><i class="fa-solid fa-folder"></i> Módulo ${m}</span><i class="fa-solid fa-chevron-down"></i></div><div class="folder-content" id="mod${m}">`;
+        niveles.forEach(lvl => {
+          const key = `${m}-${lvl}`;
+          const conf = datosClasesNormales[key] || { pass: `MOD${m}-${lvl}`, meet: 'https://meet.google.com/', videoName: '' };
+          html += `
+            <div class="classroom-box">
+              <h4>Nivel ${lvl}</h4>
+              <input type="password" id="pass-normal-${key}" class="input-pass" placeholder="Clave de Clase">
+              <button class="btn" onclick="verificarClase(${m}, '${lvl}')">Ingresar</button>
+              <div id="content-normal-${key}" style="display:none; margin-top:10px;">
+                <a href="${conf.meet}" target="_blank" class="btn">Entrar a Meet</a>
+              </div>
+            </div>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
+      }
+    }
+
+    function toggleFolder(id) { document.getElementById(id).classList.toggle('open'); }
+    function abrirAccesoClasesPersonalizadas() { document.getElementById('loginCustomModal').style.display = 'flex'; }
+    function verificarLoginCustom() {
+      if(document.getElementById('custom-pass-input').value === claveCustomGlobal) { cerrarModales(); cambiarPortal('personalizadas'); }
+      else alert('Clave incorrecta.');
+    }
+
+    function calcularYEnviarCustomWhatsApp() {
+      const lang = document.getElementById('custom-form-lang').value;
+      const country = document.getElementById('custom-form-country').value.trim();
+      const age = document.getElementById('custom-form-age').value.trim();
+      const people = document.getElementById('custom-form-people').value;
+      const startdate = document.getElementById('custom-form-startdate').value;
+      const days = document.getElementById('custom-form-days').value;
+      const hours = document.getElementById('custom-form-hours').value;
+      const focus = document.getElementById('custom-form-focus').value.trim() || 'General';
+
+      if(!country || !age || !startdate) {
+        alert('Por favor completa tu país, edad y fecha de inicio.');
+        return;
+      }
+
+      const totalUSD = Math.round(parseFloat(days) * parseFloat(hours) * 8 * 4);
+      const msg = `¡Hola Owner! ⚙️ Solicitud de Clases Personalizadas VIP:\n\n*Idioma:* ${lang}\n*País:* ${country}\n*Edad:* ${age}\n*Máx. Personas:* ${people}\n*Fecha de Inicio:* ${startdate}\n*Frecuencia:* ${days} días/sem, ${hours}h por sesión\n*Enfoque:* ${focus}\n*Precio Estimado:* $${totalUSD} USD mensuales`;
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function verificarClase(m, lvl) {
+      const key = `${m}-${lvl}`;
+      const conf = datosClasesNormales[key] || { pass: `MOD${m}-${lvl}` };
+      if(document.getElementById(`pass-normal-${key}`).value === conf.pass) {
+        document.getElementById(`content-normal-${key}`).style.display = 'block';
+        alert('¡Acceso concedido!');
+      } else alert('Contraseña incorrecta.');
+    }
+
+    const bancoPrueba = [
+      { q: "1. Complete: 'Hello, ___ name is John.'", options: ["my", "your", "his"], correct: "my" },
+      { q: "2. Plural de 'Child':", options: ["Children", "Childs", "Childrens"], correct: "Children" },
+      { q: "3. 'They ___ students.'", options: ["are", "is", "am"], correct: "are" },
+      { q: "4. Opuesto de 'Hot':", options: ["Cold", "Warm", "Dry"], correct: "Cold" },
+      { q: "5. 'I live ___ Caracas.'", options: ["in", "on", "at"], correct: "in" },
+      { q: "6. 'She ___ speak English.'", options: ["can", "cans", "is"], correct: "can" },
+      { q: "7. 'What time ___ it?'", options: ["is", "are", "has"], correct: "is" },
+      { q: "8. Pasado de 'Go':", options: ["Went", "Gone", "Goed"], correct: "Went" },
+      { q: "9. 'This is ___ book.'", options: ["a", "an", "two"], correct: "a" },
+      { q: "10. 'We ___ watching TV.'", options: ["are", "is", "be"], correct: "are" },
+      { q: "11. Días en una semana:", options: ["Seven", "Six", "Eight"], correct: "Seven" },
+      { q: "12. 'Thank you ___ much.'", options: ["very", "many", "more"], correct: "very" }
+    ];
+
+    let preguntasPartida = [], indice = 0, scoreActual = 0, tipoQuizActual = '';
+    function mezclar(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+    function actualizarEstadoBotonesQuiz() {
+      const perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+      if(perfil.quizPruebaHecho) {
+        document.getElementById('btn-quiz-prueba').innerText = '✅ Quiz Prueba Completado';
+        document.getElementById('btn-quiz-prueba').disabled = true;
+      }
+      if(perfil.quizNivelHecho) {
+        document.getElementById('btn-quiz-nivel').innerText = '✅ Quiz Nivel Completado';
+        document.getElementById('btn-quiz-nivel').disabled = true;
+      }
+    }
+
+    function iniciarQuizPrueba() {
+      tipoQuizActual = 'prueba';
+      preguntasPartida = mezclar(bancoPrueba).map(p => ({ ...p, opts: mezclar(p.options) }));
+      indice = 0; scoreActual = 0;
+      document.getElementById('quizModal').style.display = 'flex';
+      mostrarQ();
+    }
+
+    function iniciarQuizNivel() {
+      tipoQuizActual = 'nivel';
+      preguntasPartida = mezclar(bancoPrueba).map(p => ({ ...p, opts: mezclar(p.options) }));
+      indice = 0; scoreActual = 0;
+      document.getElementById('quizModal').style.display = 'flex';
+      mostrarQ();
+    }
+
+    function mostrarQ() {
+      document.getElementById('feedbackBox').style.display = 'none';
+      document.getElementById('btnNextQuestion').style.display = 'none';
+
+      if(indice >= preguntasPartida.length) {
+        let perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+        if(tipoQuizActual === 'prueba') { perfil.scorePrueba = scoreActual; perfil.quizPruebaHecho = true; }
+        else { perfil.scoreNivel = scoreActual; perfil.quizNivelHecho = true; }
+        localStorage.setItem('perfilUsuarioLocal', JSON.stringify(perfil));
+        cargarPerfil(); actualizarEstadoBotonesQuiz();
+        document.getElementById('quizCard').innerHTML = `<div style="text-align:center;"><h3>🎉 Quiz Finalizado</h3><p style="font-size:1.2rem; margin:15px 0;">Tu puntuación fue: <strong>${scoreActual} / 12 Pts</strong></p><button class="btn" onclick="cerrarModales(); location.reload();">Aceptar y Continuar</button></div>`;
+        return;
+      }
+
+      const q = preguntasPartida[indice];
+      document.getElementById('quizProgress').innerText = `Pregunta ${indice + 1} de 12`;
+      document.getElementById('questionText').innerText = q.q;
+      const c = document.getElementById('optionsContainer'); c.innerHTML = '';
+
+      q.opts.forEach(opt => {
+        const b = document.createElement('button'); b.className = 'option-btn'; b.innerText = opt;
+        b.onclick = () => {
+          document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+          const fb = document.getElementById('feedbackBox');
+          if(opt === q.correct) { scoreActual++; fb.className = 'feedback-box correct'; fb.innerText = '¡Correcto! 🎉'; }
+          else { fb.className = 'feedback-box incorrect'; fb.innerText = `Incorrecto ❌ (Respuesta: ${q.correct})`; }
+          fb.style.display = 'block'; document.getElementById('btnNextQuestion').style.display = 'block';
+        };
+        c.appendChild(b);
+      });
+    }
+
+    function siguientePregunta() { indice++; mostrarQ(); }
+
+    function renderizarLeaderboards() {
+      const container = document.getElementById('leaderboardsFoldersContainer');
+      if(!container) return;
+      container.innerHTML = '';
+      let lbData = JSON.parse(localStorage.getItem('liroy_leaderboard_data') || '{}');
+      for (let m = 1; m <= totalModulos; m++) {
+        let html = `<div class="lb-folder-card"><div class="lb-folder-header" onclick="toggleFolder('lb-mod${m}')"><span><i class="fa-solid fa-trophy"></i> Leaderboard - Módulo ${m}</span><i class="fa-solid fa-chevron-down"></i></div><div class="lb-folder-content" id="lb-mod${m}"><div class="levels-lb-grid">`;
+        niveles.forEach(lvl => {
+          const topList = (lbData[`mod_${m}`] || []).slice(0, 3);
+          html += `<div class="level-lb-card"><h4>Nivel ${lvl}</h4><ul class="lb-top-list">`;
+          if(topList.length === 0) html += `<li class="lb-top-item"><span>Sin registros</span><strong>0 Pts</strong></li>`;
+          else topList.forEach((item, idx) => { html += `<li class="lb-top-item"><span>${['🥇','🥈','🥉'][idx]} ${item.name}</span><strong>${item.score} Pts</strong></li>`; });
+          html += `</ul></div>`;
+        });
+        html += `</div></div></div>`;
+        container.innerHTML += html;
+      }
+    }
+
+    function abrirLoginProfesor() { document.getElementById('loginProfesorModal').style.display = 'flex'; }
+    function loginProfesor() {
+      if(document.getElementById('prof-pass-input').value === claveProfesorGlobal) {
+        cerrarModales(); cambiarPortal('profesores');
+      } else alert('Clave incorrecta.');
+    }
+
+    function guardarClaveClase() {
+      const m = document.getElementById('teacher-mod-select').value;
+      const lvl = document.getElementById('teacher-lvl-select').value;
+      const key = `${m}-${lvl}`;
+      const newPass = document.getElementById('teacher-mod-pass').value;
+      if(!datosClasesNormales[key]) datosClasesNormales[key] = {};
+      datosClasesNormales[key].pass = newPass;
+      localStorage.setItem('datosClasesNormales', JSON.stringify(datosClasesNormales));
+      renderizarModulosNormales();
+      alert('Contraseña guardada.');
+    }
+
+    function guardarMeetClase() {
+      const m = document.getElementById('teacher-mod-select').value;
+      const lvl = document.getElementById('teacher-lvl-select').value;
+      const key = `${m}-${lvl}`;
+      const meet = document.getElementById('teacher-meet-url').value;
+      if(!datosClasesNormales[key]) datosClasesNormales[key] = {};
+      datosClasesNormales[key].meet = meet;
+      localStorage.setItem('datosClasesNormales', JSON.stringify(datosClasesNormales));
+      alert('Meet guardado.');
+    }
+
+    // PANEL OWNER SUPREMO
+    function abrirLoginOwner() { document.getElementById('loginOwnerModal').style.display = 'flex'; }
+    function loginOwner() {
+      if(document.getElementById('owner-pass-input').value === claveOwnerGlobal) {
+        cerrarModales(); actualizarOwnerListas(); cambiarPortal('owner');
+      } else alert('Clave incorrecta.');
+    }
+
+    function ownerGuardarIdiomaEstudiante() {
+      const nuevoIdioma = document.getElementById('owner-assign-lang-select').value;
+      let perfil = JSON.parse(localStorage.getItem('perfilUsuarioLocal') || '{}');
+      perfil.idiomaAsignado = nuevoIdioma;
+      localStorage.setItem('perfilUsuarioLocal', JSON.stringify(perfil));
+      cargarPerfil();
+      alert(`✅ Rol e idioma actualizado para el estudiante: ${nuevoIdioma}`);
+    }
+
+    function actualizarOwnerListas() {
+      const gridLang = document.getElementById('owner-languages-toggle-grid');
+      if(gridLang) {
+        gridLang.innerHTML = '';
+        const nombresIdiomas = { en: 'Inglés', pt: 'Portugués', fr: 'Francés', ru: 'Ruso', cn: 'Chino', it: 'Italiano', jp: 'Japonés', de: 'Alemán' };
+        Object.keys(lenguasEstado).forEach(id => {
+          const isOn = lenguasEstado[id];
+          gridLang.innerHTML += `<button class="btn" style="margin:0; background:${isOn ? '#16a34a' : '#dc2626'};" onclick="toggleLenguaOwner('${id}')">${nombresIdiomas[id]}: ${isOn ? 'ACTIVO' : 'APAGADO'}</button>`;
+        });
+      }
+
+      const gridMod = document.getElementById('owner-modules-toggle-grid');
+      if(gridMod) {
+        gridMod.innerHTML = '';
+        for(let m=1; m<=totalModulos; m++) {
+          const isOff = modulosInhabilitados[m];
+          gridMod.innerHTML += `<button class="btn" style="margin:0; background:${isOff ? '#dc2626' : '#16a34a'};" onclick="toggleModuloOwner(${m})">Módulo ${m}: ${isOff ? 'OFF' : 'ON'}</button>`;
+        }
+      }
+    }
+
+    function toggleLenguaOwner(id) {
+      lenguasEstado[id] = !lenguasEstado[id];
+      localStorage.setItem('liroy_lenguas_estado', JSON.stringify(lenguasEstado));
+      actualizarOwnerListas();
+      renderizarGrillaIdiomas();
+    }
+
+    function toggleModuloOwner(m) {
+      modulosInhabilitados[m] = !modulosInhabilitados[m];
+      localStorage.setItem('modulosInhabilitados', JSON.stringify(modulosInhabilitados));
+      actualizarOwnerListas(); 
+      renderizarModulosNormales();
+    }
+
+    function agregarNuevoModuloOwner() {
+      totalModulos++;
+      localStorage.setItem('liroy_total_modulos', totalModulos.toString());
+      pobladorSelectsModulos();
+      renderizarModulosNormales();
+      renderizarLeaderboards();
+      actualizarOwnerListas();
+      alert(`¡Módulo ${totalModulos} agregado exitosamente!`);
+    }
+
+    function crearCarpetaPerfilAlumnoOwner() {
+      let name = filtrarTextoConAsteriscos(document.getElementById('owner-student-name').value.trim());
+      let desc = filtrarTextoConAsteriscos(document.getElementById('owner-student-desc').value.trim());
+      const level = document.getElementById('owner-student-level').value;
+      const badge = document.getElementById('owner-student-badge').value.trim();
+
+      if(!name) return;
+      listaAlumnosOficiales.push({ id: Date.now(), nombre: name, desc: desc, nivel: level, insignia: badge });
+      localStorage.setItem('liroy_alumnos_oficiales', JSON.stringify(listaAlumnosOficiales));
+      renderizarDirectorioAlumnos();
+      alert("¡Perfil oficial creado!");
+    }
+
+    function cambiarClaveOwner() {
+      const v = document.getElementById('input-new-owner-pass').value;
+      if(v) { claveOwnerGlobal = v; localStorage.setItem('claveOwnerGlobal', v); alert('Clave Owner actualizada.'); }
+    }
+
+    function cambiarClaveProfesorGlobal() {
+      const v = document.getElementById('input-new-prof-pass').value;
+      if(v) { claveProfesorGlobal = v; localStorage.setItem('claveProfesorGlobal', v); alert('Clave Profesores actualizada.'); }
+    }
+
+    function enviarMensajeWhatsAppDirecto() {
+      const t = document.getElementById('speaking-text-msg').value;
+      if(t) window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(t)}`, '_blank');
+    }
+
+    function procesarCertificado() {
+      if(document.getElementById('cert-code-input').value === "CERT-OWNER-2026") {
+        document.getElementById('cert-announcement-box').style.display = 'block';
+      } else alert('Clave inválida.');
+    }
+  </script>
+</body>
+</html>
