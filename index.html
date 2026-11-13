@@ -25,7 +25,21 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--dark); background-image: var(--bg-gradient); color: #f8fafc; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 1.2s ease; }
+    body { background-color: var(--dark); background-image: var(--bg-gradient); color: #f8fafc; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 1.8s ease; }
+
+    /* CORTINA / TRANSICIÓN SUAVE ENTRE IDIOMAS */
+    #language-transition-overlay {
+      position: fixed; inset: 0; background: #030712; z-index: 10500;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #language-transition-overlay.active { opacity: 1; pointer-events: all; }
+    .transition-spinner {
+      width: 70px; height: 70px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--secondary);
+      border-radius: 50%; animation: spinLang 0.8s linear infinite; margin-bottom: 18px;
+    }
+    @keyframes spinLang { to { transform: rotate(360deg); } }
+    .transition-text { font-size: 1.3rem; font-weight: 700; letter-spacing: 1px; color: #f8fafc; text-align: center; padding: 0 20px; }
 
     #welcome-splash {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -60,6 +74,7 @@
       background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(12px); color: white; padding: 1.1rem 2.5rem;
       display: flex; justify-content: space-between; align-items: center;
       box-shadow: var(--shadow); flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      transition: background 1.2s ease;
     }
     .logo { font-size: 1.45rem; font-weight: 800; display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo i { color: var(--secondary); font-size: 1.6rem; }
@@ -67,9 +82,9 @@
     .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
     .tab-btn {
       background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); padding: 0.65rem 1.1rem;
-      border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
+      border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.4s ease;
     }
-    .tab-btn:hover, .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 15px var(--glow); }
+    .tab-btn:hover, .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 18px var(--glow); transform: translateY(-2px); }
     .tab-btn.custom-btn { background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #0284c7; color: white; }
     .tab-btn.owner-btn { background: linear-gradient(135deg, #d97706, #b45309); border-color: #d97706; color: white; }
 
@@ -95,8 +110,8 @@
     .student-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-top: 4px; }
 
     .portal-section { display: none; }
-    .portal-section.active { display: block; animation: fadeInPortal 0.3s ease; }
-    @keyframes fadeInPortal { from { opacity: 0; } to { opacity: 1; } }
+    .portal-section.active { display: block; animation: fadeInPortal 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes fadeInPortal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
     .section-title {
       font-size: 1.5rem; margin-bottom: 1.5rem; color: #f8fafc;
@@ -104,8 +119,12 @@
     }
 
     .languages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-    .lang-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--shadow); position: relative; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
-    .lang-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .lang-card {
+      background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 1.8rem;
+      box-shadow: var(--shadow); position: relative; border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.4s ease, border-color 0.4s ease, background 1.2s ease;
+    }
+    .lang-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 0 25px var(--glow); }
     .lang-card.active { border-left: 6px solid var(--success); }
     .lang-card.locked { opacity: 0.65; background: #0f172a; border-left: 6px solid var(--gray); }
     .badge-status { position: absolute; top: 18px; right: 18px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
@@ -115,19 +134,20 @@
     .btn {
       display: inline-block; width: 100%; padding: 0.8rem; border: none; border-radius: 10px;
       background: var(--accent); color: white; font-weight: 700; text-align: center; cursor: pointer;
-      margin-top: 1.2rem; text-decoration: none; font-size: 0.95rem; transition: background 0.2s, box-shadow 0.2s;
+      margin-top: 1.2rem; text-decoration: none; font-size: 0.95rem; transition: all 0.3s ease;
     }
-    .btn:hover { opacity: 0.92; box-shadow: 0 0 15px var(--glow); }
+    .btn:hover { opacity: 0.92; box-shadow: 0 0 20px var(--glow); transform: translateY(-2px); }
     .btn-disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
     .btn-history { background: #2563eb; font-size: 0.85rem; padding: 0.6rem; margin-top: 10px; }
 
     .modules-accordion { display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2.5rem; }
-    .folder-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--shadow); overflow: hidden; }
-    .folder-header { background: rgba(255,255,255,0.03); padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; color: #f8fafc; }
+    .folder-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--shadow); overflow: hidden; transition: border-color 1s ease; }
+    .folder-header { background: rgba(255,255,255,0.03); padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; color: #f8fafc; transition: background 0.3s; }
     .folder-header:hover { background: rgba(255,255,255,0.08); }
     .folder-content { display: none; padding: 1.8rem; background: #0f172a; border-top: 1px solid #334155; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
-    .folder-content.open { display: grid; }
-    .classroom-box { background: #1e293b; padding: 1.4rem; border-radius: 12px; border: 1px solid #334155; text-align: center; }
+    .folder-content.open { display: grid; animation: fadeInPortal 0.4s ease; }
+    .classroom-box { background: #1e293b; padding: 1.4rem; border-radius: 12px; border: 1px solid #334155; text-align: center; transition: border-color 0.4s; }
+    .classroom-box:hover { border-color: var(--accent); }
 
     .lb-folder-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.2rem; box-shadow: var(--shadow); overflow: hidden; }
     .lb-folder-header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; }
@@ -147,11 +167,17 @@
     .feedback-box.correct { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid #16a34a; }
     .feedback-box.incorrect { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #dc2626; }
 
-    .input-pass, .input-text-pro { width: 100%; padding: 0.75rem 1rem; border: 1px solid #334155; border-radius: 10px; margin-top: 0.6rem; font-size: 0.95rem; background: #0f172a; color: #fff; }
-    .input-pass:focus, .input-text-pro:focus { outline: none; border-color: var(--accent); }
+    .input-pass, .input-text-pro { width: 100%; padding: 0.75rem 1rem; border: 1px solid #334155; border-radius: 10px; margin-top: 0.6rem; font-size: 0.95rem; background: #0f172a; color: #fff; transition: border-color 0.3s; }
+    .input-pass:focus, .input-text-pro:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px var(--glow); }
   </style>
 </head>
 <body>
+
+  <!-- CORTINA DE TRANSICIÓN SUAVE ENTRE IDIOMAS -->
+  <div id="language-transition-overlay">
+    <div class="transition-spinner"></div>
+    <div class="transition-text" id="transition-msg">Cambiando de idioma con éxito...</div>
+  </div>
 
   <!-- ANIMACIÓN DE ENTRADA -->
   <div id="welcome-splash">
@@ -216,11 +242,11 @@
           </div>
         </section>
 
-        <!-- 8 IDIOMAS CON BANDERAS Y ACCESO CON CONTRASEÑA -->
+        <!-- 8 IDIOMAS CON BANDERAS DE FONDO Y ACCESO CON CONTRASEÑA -->
         <section>
           <h2 class="section-title"><i class="fa-solid fa-globe"></i> Cursos e Idiomas Disponibles (8 Idiomas)</h2>
           <div class="languages-grid" id="languages-grid-container">
-            <!-- Renderizado dinámico controlado por el Owner y contraseñas -->
+            <!-- Renderizado dinámico -->
           </div>
         </section>
 
@@ -393,12 +419,6 @@
             <label style="font-weight:700; font-size:0.9rem;">Link de Meet:</label>
             <input type="text" id="teacher-meet-url" class="input-pass" placeholder="https://meet.google.com/xxx-xxxx-xxx">
             <button class="btn" style="margin-top:8px;" onclick="guardarMeetClase()">Guardar Meet</button>
-          </div>
-
-          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
-            <label style="font-weight:700; font-size:0.9rem;">Subir Clase Grabada (Máx 3 Horas):</label>
-            <input type="file" id="teacher-class-file" accept="video/*" class="input-pass" style="margin-top:5px; background:#1e293b;">
-            <button class="btn" style="background:#2563eb; margin-top:8px;" onclick="subirVideoHistorialArchivo()">Publicar Video</button>
           </div>
 
           <div style="background: #0f172a; padding: 1.8rem; border-radius: 12px; border: 1px solid #334155;">
@@ -596,33 +616,26 @@
       grid.innerHTML = '';
 
       const idiomasInfo = [
-        { id: 'en', name: '🇺🇸 🇬🇧 Inglés Liroy', desc: 'Portal principal, módulos, exámenes y clases.' },
-        { id: 'pt', name: '🇧🇷 🇵🇹 Portugués Liroy', desc: 'Portal de Portugués con contraseña y tema verde.' },
-        { id: 'fr', name: '🇫🇷 Francés Liroy', desc: 'Portal de Francés con contraseña y tema azul/rojo.' },
-        { id: 'ru', name: '🇷🇺 Ruso', desc: 'Próximamente disponible.' },
-        { id: 'cn', name: '🇨🇳 Chino Mandarín', desc: 'Próximamente disponible.' },
-        { id: 'it', name: '🇮🇹 Italiano', desc: 'Próximamente disponible.' },
-        { id: 'jp', name: '🇯🇵 Japonés', desc: 'Próximamente disponible.' },
-        { id: 'de', name: '🇩🇪 Alemán', desc: 'Próximamente disponible.' }
+        { id: 'en', name: '🇺🇸 🇬🇧 Inglés Liroy', desc: 'Portal principal, módulos, exámenes y clases.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg' },
+        { id: 'pt', name: '🇧🇷 🇵🇹 Portugués Liroy', desc: 'Portal de Portugués con contraseña y tema verde.', flagBg: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg' },
+        { id: 'fr', name: '🇫🇷 Francés Liroy', desc: 'Portal de Francés con contraseña y tema azul/rojo.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg' },
+        { id: 'ru', name: '🇷🇺 Ruso', desc: 'Próximamente disponible.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/f/f3/Flag_of_Russia.svg' },
+        { id: 'cn', name: '🇨🇳 Chino Mandarín', desc: 'Próximamente disponible.', flagBg: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg' },
+        { id: 'it', name: '🇮🇹 Italiano', desc: 'Próximamente disponible.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/0/03/Flag_of_Italy.svg' },
+        { id: 'jp', name: '🇯🇵 Japonés', desc: 'Próximamente disponible.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/9/9e/Flag_of_Japan.svg' },
+        { id: 'de', name: '🇩🇪 Alemán', desc: 'Próximamente disponible.', flagBg: 'https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg' }
       ];
 
       idiomasInfo.forEach(item => {
         const isActive = lenguasEstado[item.id];
-        let cardClass = isActive ? 'lang-card active' : 'lang-card locked';
         let badgeHTML = isActive ? '<span class="badge-status badge-active">Protegido / Activo</span>' : '<span class="badge-status badge-locked">Próximamente</span>';
-        let btnHTML = isActive ? `<button class="btn" onclick="seleccionarIdiomaPortal('${item.id}')">Entrar a ${item.name.split(' ')[1]}</button>` : `<button class="btn btn-disabled" disabled>Bloqueado</button>`;
+        let btnHTML = isActive ? `<button class="btn" onclick="seleccionarIdiomaPortal('${item.id}')">Entrar al Portal</button>` : `<button class="btn btn-disabled" disabled>Bloqueado</button>`;
         
-        if(item.id === 'pt' && isActive) {
-          cardClass = 'lang-card active';
-        } else if(item.id === 'fr' && isActive) {
-          cardClass = 'lang-card active';
-        }
-
         grid.innerHTML += `
-          <div class="${cardClass}">
+          <div class="lang-card ${isActive ? 'active' : 'locked'}" style="background-image: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(7,25,54,0.92)), url('${item.flagBg}'); background-size: cover; background-position: center;">
             ${badgeHTML}
-            <h3>${item.name}</h3>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 6px;">${item.desc}</p>
+            <h3 style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${item.name}</h3>
+            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${item.desc}</p>
             ${btnHTML}
           </div>
         `;
@@ -637,6 +650,7 @@
       document.getElementById('modalPasswordIdioma').style.display = 'flex';
     }
 
+    // ANIMACIÓN LENTA Y FLUIDA DE CAMBIO DE COLOR Y MÓDULOS (TRANSICIÓN DE IDIOMA)
     function verificarPasswordIdioma() {
       const pass = document.getElementById('input-idioma-pass').value;
       const id = idiomaSeleccionadoPendiente;
@@ -644,30 +658,46 @@
 
       if(pass === passReal) {
         cerrarModales();
-        idiomaActualActivo = id;
         
-        // Cambio dinámico de colores y temas de fondo por idioma
-        if(id === 'en') {
-          document.documentElement.style.setProperty('--dark', '#071936');
-          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #0e2d5c, #040d1c)');
-          document.documentElement.style.setProperty('--accent', '#d91e36');
-          document.documentElement.style.setProperty('--glow', 'rgba(217, 30, 54, 0.45)');
-          document.getElementById('current-lang-title').innerText = 'Inglés';
-        } else if(id === 'pt') {
-          document.documentElement.style.setProperty('--dark', '#032b16');
-          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #064e28, #02170c)');
-          document.documentElement.style.setProperty('--accent', '#eab308');
-          document.documentElement.style.setProperty('--glow', 'rgba(234, 179, 8, 0.45)');
-          document.getElementById('current-lang-title').innerText = 'Portugués (Brasil)';
-        } else if(id === 'fr') {
-          document.documentElement.style.setProperty('--dark', '#081436');
-          document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #112663, #04091a)');
-          document.documentElement.style.setProperty('--accent', '#ef4444');
-          document.documentElement.style.setProperty('--glow', 'rgba(239, 68, 68, 0.45)');
-          document.getElementById('current-lang-title').innerText = 'Francés (Francia)';
-        }
+        // Mostrar cortina de transición suave
+        const overlay = document.getElementById('language-transition-overlay');
+        const msg = document.getElementById('transition-msg');
+        const nombres = { en: 'Inglés', pt: 'Portugués (Brasil)', fr: 'Francés (Francia)' };
+        msg.innerText = `Cambiando al portal de ${nombres[id] || id.toUpperCase()}... Aplicando temas y colores`;
+        overlay.classList.add('active');
 
-        alert(`✅ ¡Acceso concedido al Portal de ${id.toUpperCase()} con todo el contenido activo!`);
+        setTimeout(() => {
+          idiomaActualActivo = id;
+          
+          // Aplicar transición suave de colores corporativos
+          if(id === 'en') {
+            document.documentElement.style.setProperty('--dark', '#071936');
+            document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #0e2d5c, #040d1c)');
+            document.documentElement.style.setProperty('--accent', '#d91e36');
+            document.documentElement.style.setProperty('--glow', 'rgba(217, 30, 54, 0.45)');
+            document.getElementById('current-lang-title').innerText = 'Inglés';
+          } else if(id === 'pt') {
+            document.documentElement.style.setProperty('--dark', '#032b16');
+            document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #064e28, #02170c)');
+            document.documentElement.style.setProperty('--accent', '#eab308');
+            document.documentElement.style.setProperty('--glow', 'rgba(234, 179, 8, 0.45)');
+            document.getElementById('current-lang-title').innerText = 'Portugués (Brasil)';
+          } else if(id === 'fr') {
+            document.documentElement.style.setProperty('--dark', '#081436');
+            document.documentElement.style.setProperty('--bg-gradient', 'radial-gradient(circle at top right, #112663, #04091a)');
+            document.documentElement.style.setProperty('--accent', '#ef4444');
+            document.documentElement.style.setProperty('--glow', 'rgba(239, 68, 68, 0.45)');
+            document.getElementById('current-lang-title').innerText = 'Francés (Francia)';
+          }
+
+          renderizarModulosNormales();
+          renderizarLeaderboards();
+
+          setTimeout(() => {
+            overlay.classList.remove('active');
+          }, 600);
+        }, 1200);
+
       } else {
         alert('❌ Contraseña incorrecta.');
       }
@@ -759,10 +789,10 @@
       container.innerHTML = '';
       for (let m = 1; m <= totalModulos; m++) {
         if(modulosInhabilitados[m]) continue;
-        let html = `<div class="folder-card"><div class="folder-header" onclick="toggleFolder('mod${m}')"><span><i class="fa-solid fa-folder"></i> Módulo ${m}</span><i class="fa-solid fa-chevron-down"></i></div><div class="folder-content" id="mod${m}">`;
+        let html = `<div class="folder-card"><div class="folder-header" onclick="toggleFolder('mod${m}')"><span><i class="fa-solid fa-folder"></i> Módulo ${m} (${idiomaActualActivo.toUpperCase()})</span><i class="fa-solid fa-chevron-down"></i></div><div class="folder-content" id="mod${m}">`;
         niveles.forEach(lvl => {
           const key = `${m}-${lvl}`;
-          const conf = datosClasesNormales[key] || { pass: `MOD${m}-${lvl}`, meet: 'https://meet.google.com/', videoName: '' };
+          const conf = datosClasesNormales[key] || { pass: `MOD${m}-${lvl}`, meet: 'https://meet.google.com/' };
           html += `
             <div class="classroom-box">
               <h4>Nivel ${lvl}</h4>
@@ -900,7 +930,7 @@
       container.innerHTML = '';
       let lbData = JSON.parse(localStorage.getItem('liroy_leaderboard_data') || '{}');
       for (let m = 1; m <= totalModulos; m++) {
-        let html = `<div class="lb-folder-card"><div class="lb-folder-header" onclick="toggleFolder('lb-mod${m}')"><span><i class="fa-solid fa-trophy"></i> Leaderboard - Módulo ${m}</span><i class="fa-solid fa-chevron-down"></i></div><div class="lb-folder-content" id="lb-mod${m}"><div class="levels-lb-grid">`;
+        let html = `<div class="lb-folder-card"><div class="lb-folder-header" onclick="toggleFolder('lb-mod${m}')"><span><i class="fa-solid fa-trophy"></i> Leaderboard - Módulo ${m} (${idiomaActualActivo.toUpperCase()})</span><i class="fa-solid fa-chevron-down"></i></div><div class="lb-folder-content" id="lb-mod${m}"><div class="levels-lb-grid">`;
         niveles.forEach(lvl => {
           const topList = (lbData[`mod_${m}`] || []).slice(0, 3);
           html += `<div class="level-lb-card"><h4>Nivel ${lvl}</h4><ul class="lb-top-list">`;
@@ -943,7 +973,6 @@
       alert('Meet guardado.');
     }
 
-    // PANEL OWNER SUPREMO
     function abrirLoginOwner() { document.getElementById('loginOwnerModal').style.display = 'flex'; }
     function loginOwner() {
       if(document.getElementById('owner-pass-input').value === claveOwnerGlobal) {
