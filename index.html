@@ -689,11 +689,18 @@
 
     function quitarSplash() {
       const s = document.getElementById('welcome-splash');
-      if(s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 600); }
+      if (s) {
+        s.style.pointerEvents = 'none'; // Evita que siga bloqueando clics mientras se desvanece
+        s.style.opacity = '0';
+        setTimeout(() => {
+          s.style.display = 'none';
+        }, 600);
+      }
     }
-    window.addEventListener('load', () => setTimeout(quitarSplash, 3000));
 
-    window.addEventListener('DOMContentLoaded', () => {
+    // Se ejecuta al cargar el DOM para asegurar que nunca se quede congelado
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(quitarSplash, 3000);
       pobladorSelectsModulos();
       renderizarGrillaIdiomas();
       renderizarModulosNormales();
@@ -845,7 +852,6 @@
       if(!c) return;
       c.innerHTML = '';
 
-      // Carpeta Docente DENTRO del apartado de profesores
       c.innerHTML += `
         <div class="folder-card" style="border: 2px dashed var(--secondary); margin-bottom: 1.5rem;">
           <div class="folder-header" onclick="toggleFolder('carpeta-docente-principal')">
@@ -897,13 +903,7 @@
       customLb.push({ name: p.nombre, score: 50, lang: lang });
       localStorage.setItem('liroy_lb_custom', JSON.stringify(customLb));
 
-      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(`¡Hola Owner! ⚙️ Clases VIP:
-- Idioma: ${lang}
-- País: ${country}
-- Edad: ${age}
-- Personas: ${people}
-- Inicio: ${startdate}
-- Precio: $${totalUSD} USD`)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(`¡Hola Owner! ⚙️ Clases VIP:\n- Idioma: ${lang}\n- País: ${country}\n- Edad: ${age}\n- Personas: ${people}\n- Inicio: ${startdate}\n- Precio: $${totalUSD} USD`)}`, '_blank');
     }
 
     function renderizarLeaderboardPersonalizadas() {
@@ -1017,15 +1017,12 @@
     }
 
     function enviarNotasEstudiantesOwner() {
-      let r = "📋 *Reporte de Notas Docente*:
-
-";
+      let r = "📋 *Reporte de Notas Docente*:\n\n";
       for(let i=1; i<=10; i++) {
         let est = document.getElementById(`t-est-${i}`).value.trim();
         let nota = document.getElementById(`t-nota-${i}`).value.trim();
         let opin = document.getElementById(`t-opin-${i}`).value.trim();
-        if(est) r += `- ${est}: ${nota} Pts | Opción: ${opin}
-`;
+        if(est) r += `- ${est}: ${nota} Pts | Opción: ${opin}\n`;
       }
       window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(r)}`, '_blank');
     }
