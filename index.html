@@ -589,7 +589,9 @@
       "zh":"chino2026", "ja":"japones2026"
     });
     
-    // Forzar estado inicial correcto (3 activos, 5 bloqueados) limpiando caché vieja defectuosa
+    // Limpiar caché vieja y forzar estructura limpia sin undefined
+    localStorage.removeItem('liroy_idiomas_estado');
+
     let idiomasGlobales = [
       { id: 'en', flag: '🇺🇸', name: 'Inglés Liroy', activo: true },
       { id: 'pt', flag: '🇧🇷', name: 'Portugués Liroy', activo: true },
@@ -601,6 +603,31 @@
       { id: 'ja', flag: '🇯🇵', name: 'Japonés Liroy', activo: false }
     ];
     localStorage.setItem('liroy_idiomas_estado', JSON.stringify(idiomasGlobales));
+
+    function renderizarGrillaIdiomas() {
+      const grid = document.getElementById('languages-grid-container');
+      if(!grid) return;
+      grid.innerHTML = '';
+      idiomasGlobales.forEach(i => {
+        const flag = i.flag || '🌐';
+        const name = i.name || 'Idioma';
+        if (i.activo) {
+          grid.innerHTML += `
+            <div class="lang-card active">
+              <span class="badge-status badge-active">Activo</span>
+              <h3><span style="font-size: 1.4rem; margin-right: 6px;">${flag}</span> ${name}</h3>
+              <button class="btn" onclick="seleccionarIdiomaPortal('${i.id}')">Entrar al Portal</button>
+            </div>`;
+        } else {
+          grid.innerHTML += `
+            <div class="lang-card locked">
+              <span class="badge-status badge-locked">Próximamente 🔒</span>
+              <h3><span style="font-size: 1.4rem; margin-right: 6px;">${flag}</span> ${name}</h3>
+              <button class="btn" style="background:#334155; cursor:not-allowed;" disabled>No disponible</button>
+            </div>`;
+        }
+      });
+    }
 
     let profesoresRegistrados = safeJSONParse('liroy_profesores_reg', [
       {id:1, nombre:"Profesor Mateo", user:"mateo", pass:"PROFESOR2026", tipo:"Normal"},
