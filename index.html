@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liroy Estudio de Idiomas — Plataforma Global</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e3a8a;
+      --accent: #d91e36;
+      --secondary: #f59e0b;
+      --dark: #071936;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius: 14px;
+      --shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.3);
+      --bg-gradient: radial-gradient(circle at top right, #0e2d5c, #040d1c);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glow: rgba(217, 30, 54, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--dark); background-image: var(--bg-gradient); color: #f8fafc; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 1.8s ease; }
+
+    #language-transition-overlay {
+      position: fixed; inset: 0; background: #030712; z-index: 10500;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out, background 0.8s ease;
+    }
+    #language-transition-overlay.active { opacity: 1; pointer-events: all; background: #071936; }
+    .transition-spinner {
+      width: 70px; height: 70px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--secondary);
+      border-radius: 50%; animation: spinLang 0.8s linear infinite; margin-bottom: 18px;
+    }
+    @keyframes spinLang { to { transform: rotate(360deg); } }
+    .transition-text { font-size: 1.3rem; font-weight: 700; letter-spacing: 1px; color: #f8fafc; text-align: center; padding: 0 20px; }
+
+    #welcome-splash {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at center, #0f2347 0%, #030712 100%);
+      z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; color: white; transition: opacity 0.6s ease, visibility 0.6s; padding: 2rem;
+    }
+    .splash-icon { font-size: 5rem; color: #f59e0b; margin-bottom: 1.5rem; animation: splashBounce 2s infinite alternate ease-in-out; }
+    @keyframes splashBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-10px) scale(1.05); } }
+    .splash-title { font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .splash-subtitle { font-size: 1.25rem; color: #cbd5e1; font-weight: 400; max-width: 600px; }
+    .splash-loader { width: 220px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 2.5rem; overflow: hidden; }
+    .splash-bar { width: 100%; height: 100%; background: #f59e0b; animation: loadLine 4s linear forwards; }
+    @keyframes loadLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } }
+    
+    .skip-splash-btn {
+      margin-top: 2rem; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.6rem 1.4rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+    }
+    .skip-splash-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+    #promo-banner {
+      background: linear-gradient(135deg, #090d16, #1e3a8a, #d97706);
+      color: white; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 0.92rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .promo-tag { background: #f59e0b; color: #0f172a; padding: 3px 10px; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
+    .timer-badge { background: rgba(15, 23, 42, 0.85); padding: 5px 12px; border-radius: 8px; font-family: monospace; font-size: 1.05rem; color: #fef08a; border: 1px solid rgba(255,255,255,0.2); }
+
+    header {
+      background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(12px); color: white; padding: 1.1rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: var(--shadow); flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-size: 1.45rem; font-weight: 800; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .logo i { color: var(--secondary); font-size: 1.6rem; }
+    .logo span { color: var(--accent); }
+    .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); padding: 0.65rem 1.1rem;
+      border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.4s ease;
+    }
+    .tab-btn:hover, .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 18px var(--glow); transform: translateY(-2px); }
+    .tab-btn.custom-btn { background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #0284c7; color: white; }
+    .tab-btn.owner-btn { background: linear-gradient(135deg, #d97706, #b45309); border-color: #d97706; color: white; }
+
+    .main-layout { display: flex; gap: 1.5rem; max-width: 1400px; margin: 2.5rem auto; padding: 0 1.5rem; align-items: flex-start; }
+    .container { flex: 1; min-width: 0; }
+    
+    .sidebar-students-wrapper { display: flex; align-items: flex-start; z-index: 100; }
+    .sidebar-toggle-btn {
+      background: #1e3a8a; color: white; border: 1px solid #334155;
+      padding: 0.9rem 1.1rem; border-radius: var(--radius); font-weight: bold; cursor: pointer;
+      display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); white-space: nowrap; transition: background 0.2s;
+    }
+    .sidebar-toggle-btn:hover { background: #2563eb; }
+    .sidebar-content-box {
+      max-width: 0; opacity: 0; overflow: hidden; transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+      background: #1e293b; border-radius: var(--radius); border: 1px solid #334155; box-shadow: var(--shadow); margin-left: 0;
+    }
+    .sidebar-content-box.open {
+      max-width: 280px; opacity: 1; padding: 1.2rem; margin-left: 10px; overflow-y: auto; max-height: 550px;
+    }
+    .student-list-item { background: #0f172a; padding: 9px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #334155; cursor: pointer; }
+    .student-list-item:hover { border-color: var(--accent); }
+    .student-name { font-weight: bold; font-size: 0.88rem; color: #f8fafc; }
+    .student-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-top: 4px; }
+
+    .portal-section { display: none; }
+    .portal-section.active { display: block; animation: fadeInPortal 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes fadeInPortal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-title {
+      font-size: 1.5rem; margin-bottom: 1.5rem; color: #f8fafc;
+      display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 700;
+    }
+
+    .languages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+    .lang-card {
+      background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 1.8rem;
+      box-shadow: var(--shadow); position: relative; border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.4s ease, border-color 0.4s ease, background 1.2s ease;
+    }
+    .lang-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 0 25px var(--glow); }
+    .lang-card.active { border-left: 6px solid var(--success); }
+    .badge-status { position: absolute; top: 18px; right: 18px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-active { background: #dcfce7; color: var(--success); }
+
+    .btn {
+      display: inline-block; width: 100%; padding: 0.8rem; border: none; border-radius: 10px;
+      background: var(--accent); color: white; font-weight: 700; text-align: center; cursor: pointer;
+      margin-top: 1.2rem; text-decoration: none; font-size: 0.95rem; transition: all 0.3s ease;
+    }
+    .btn:hover { opacity: 0.92; box-shadow: 0 0 20px var(--glow); transform: translateY(-2px); }
+    .btn-history { background: #2563eb; font-size: 0.85rem; padding: 0.65rem; margin-top: 10px; }
+
+    .modules-accordion { display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2.5rem; }
+    .folder-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--shadow); overflow: hidden; }
+    .folder-header { background: rgba(255,255,255,0.03); padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; color: #f8fafc; transition: background 0.3s; }
+    .folder-header:hover { background: rgba(255,255,255,0.08); }
+    .folder-content { display: none; padding: 1.8rem; background: #0f172a; border-top: 1px solid #334155; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+    .folder-content.open { display: grid; animation: fadeInPortal 0.4s ease; }
+    .classroom-box { background: #1e293b; padding: 1.4rem; border-radius: 12px; border: 1px solid #334155; text-align: center; transition: border-color 0.4s; }
+    .classroom-box:hover { border-color: var(--accent); }
+
+    .lb-folder-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.2rem; box-shadow: var(--shadow); overflow: hidden; }
+    .lb-folder-header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 1.3rem 1.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 1.15rem; }
+    .lb-folder-content { display: none; padding: 1.8rem; background: #0f172a; border-top: 1px solid #334155; }
+    .lb-folder-content.open { display: block; }
+    .lb-top-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .lb-top-item { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 9px 12px; display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 500; color: #e2e8f0; }
+
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.85); z-index: 2000; justify-content: center; align-items: center; padding: 1.5rem; backdrop-filter: blur(4px); }
+    .modal-card { background: #1e293b; color: #f8fafc; max-width: 680px; width: 100%; border-radius: 18px; padding: 2.5rem; max-height: 90vh; overflow-y: auto; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .option-btn { display: block; width: 100%; padding: 0.9rem 1rem; margin: 0.6rem 0; background: #0f172a; border: 1px solid #334155; color: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 0.98rem; font-weight: 500; transition: background 0.2s; }
+    .option-btn:hover { background: #334155; }
+
+    .feedback-box { margin-top: 1.2rem; padding: 1.3rem; border-radius: 12px; display: none; font-size: 0.98rem; }
+    .feedback-box.correct { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid #16a34a; }
+    .feedback-box.incorrect { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #dc2626; }
+
+    .input-pass, .input-text-pro { width: 100%; padding: 0.75rem 1rem; border: 1px solid #334155; border-radius: 10px; margin-top: 0.6rem; font-size: 0.95rem; background: #0f172a; color: #fff; transition: border-color 0.3s; }
+    .input-pass:focus, .input-text-pro:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px var(--glow); }
+
+    .history-video-card { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; }
+    .history-video-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; font-size: 0.85rem; color: #94a3b8; }
+    .badge-duration { background: #1e3a8a; color: #93c5fd; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+
+  <div id="language-transition-overlay">
+    <div class="transition-spinner"></div>
+    <div class="transition-text" id="transition-msg">Cambiando de idioma con éxito...</div>
+  </div>
+
+  <div id="welcome-splash">
+    <div class="splash-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <h1 class="splash-title">Liroy Estudio de Idiomas</h1>
+    <p class="splash-subtitle">Bienvenido a la Excelencia Académica y Global</p>
+    <div class="splash-loader"><div class="splash-bar"></div></div>
+    <button class="skip-splash-btn" onclick="quitarSplash()">Omitir Animación ➔</button>
+  </div>
+
+  <div id="promo-banner">
+    <div><span class="promo-tag">OFERTA ESPECIAL</span> 30 minutos de Clase GRATIS</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="timer-badge" id="week-timer-display">OFFLINE (00d : 00h : 00m : 00s)</div>
+      <button onclick="iniciarQuizPrueba()" style="background: #f59e0b; color: #0f172a; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;">Probar Quiz Prueba (12 Pts)</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo" onclick="cambiarPortal('estudiantes')"><i class="fa-solid fa-graduation-cap"></i> Liroy <span>Estudio</span></div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="cambiarPortal('estudiantes')"><i class="fa-solid fa-user-graduate"></i> Estudiantes</button>
+      <button class="tab-btn custom-btn" onclick="abrirAccesoClasesPersonalizadas()"><i class="fa-solid fa-user-lock"></i> Clases Personalizadas</button>
+      <button class="tab-btn" onclick="cambiarPortal('perfil')"><i class="fa-solid fa-id-card"></i> Mi Perfil</button>
+      <button class="tab-btn" onclick="cambiarPortal('speaking')"><i class="fa-solid fa-comments"></i> Speaking Zone</button>
+      <button class="tab-btn" onclick="cambiarPortal('certificados')"><i class="fa-solid fa-award"></i> Certificados</button>
+      <button class="tab-btn" onclick="abrirLoginProfesor()"><i class="fa-solid fa-chalkboard-user"></i> Profesores</button>
+      <button class="tab-btn owner-btn" onclick="abrirLoginOwner()"><i class="fa-solid fa-crown"></i> Owner</button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    
+    <div class="sidebar-students-wrapper">
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarStudents()">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Directorio Alumnos</span>
+        <i class="fa-solid fa-chevron-right" id="sidebar-chevron"></i>
+      </button>
+      <div class="sidebar-content-box" id="sidebarStudentsBox">
+        <h4 style="color:#f8fafc; font-size:0.95rem; margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:5px;">👥 Alumnos Registrados</h4>
+        <div id="students-directory-list"></div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- PORTAL ESTUDIANTES / IDIOMAS -->
+      <div id="portal-estudiantes" class="portal-section active">
+        <section style="margin-bottom: 2.5rem; background: linear-gradient(135deg, #1e293b, #1e3a8a); color: white; padding: 2.2rem; border-radius: var(--radius); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border: 1px solid #334155;">
+          <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-vial"></i> 1. Quiz de Prueba (12 Pts)</h3>
+            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 12px;">Para medir tu nivel sin compromiso.</p>
+            <button class="btn" style="background: #f59e0b; color: #0f172a;" onclick="iniciarQuizPrueba()"><i class="fa-solid fa-play"></i> Iniciar Quiz Prueba</button>
+          </div>
+          <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-award"></i> 2. Quiz Evaluativo de Nivel (12 Pts)</h3>
+            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 12px;">Para subir tu puntuación formal al perfil.</p>
+            <button class="btn" style="background: #16a34a;" onclick="iniciarQuizNivel()"><i class="fa-solid fa-graduation-cap"></i> Iniciar Quiz de Nivel</button>
+          </div>
+        </section>
+
+        <!-- 3 IDIOMAS ACTIVOS -->
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-globe"></i> Cursos e Idiomas Disponibles (3 Activos)</h2>
+          <div class="languages-grid" id="languages-grid-container"></div>
+        </section>
+
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-folder-tree"></i> Módulos de Aprendizaje (<span id="current-lang-title">Inglés</span> — Espacio Privado)</h2>
+          <div class="modules-accordion" id="modulesContainer"></div>
+        </section>
+
+        <section>
+          <h2 class="section-title"><i class="fa-solid fa-trophy"></i> Leaderboards Privados por Módulo (<span id="current-lang-lb-title">Inglés</span> — Top 3)</h2>
+          <div id="leaderboardsFoldersContainer"></div>
+        </section>
+      </div>
+
+      <!-- CLASES PERSONALIZADAS VIP -->
+      <div id="portal-personalizadas" class="portal-section">
+        <div style="background: linear-gradient(135deg, #1e293b, #0369a1); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2rem; border: 1px solid #334155; text-align: center;">
+          <h2 style="color: #f8fafc; font-size: 1.8rem; margin-bottom: 10px;"><i class="fa-solid fa-user-lock"></i> Clases Personalizadas VIP a Medida</h2>
+          <p style="color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 0.95rem;">Configura tu plan personalizado y calcula tu tarifa estimada en USD antes de enviarla directo al WhatsApp del Owner.</p>
+        </div>
+
+        <div style="background: #1e293b; padding: 2.5rem; border-radius: var(--radius); border: 1px solid #334155; max-width: 750px; margin: auto; margin-bottom: 2rem;">
+          <h3 style="margin-bottom: 15px; color: #38bdf8;"><i class="fa-solid fa-gear"></i> Formulario de Configuración VIP</h3>
+          
+          <label style="font-weight:600; font-size:0.9rem;">Idioma deseado:</label>
+          <select id="custom-form-lang" class="input-pass" style="margin-bottom: 12px;">
+            <option value="Inglés">Inglés</option>
+            <option value="Portugués">Portugués</option>
+            <option value="Francés">Francés</option>
+          </select>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Tu País:</label>
+              <input type="text" id="custom-form-country" class="input-pass" placeholder="Ej: Venezuela, Colombia...">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Tu Edad:</label>
+              <input type="number" id="custom-form-age" class="input-pass" placeholder="Ej: 15">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Máximo de personas:</label>
+              <input type="number" id="custom-form-people" class="input-pass" value="1" min="1">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Fecha de Inicio:</label>
+              <input type="date" id="custom-form-startdate" class="input-pass">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Días por semana:</label>
+              <select id="custom-form-days" class="input-pass">
+                <option value="2">2 días por semana</option>
+                <option value="3">3 días por semana</option>
+                <option value="5">5 días por semana (Intensivo)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.9rem;">Horas por sesión (Máx 2h):</label>
+              <select id="custom-form-hours" class="input-pass">
+                <option value="1">1 hora</option>
+                <option value="1.5">1.5 horas</option>
+                <option value="2">2 horas</option>
+              </select>
+            </div>
+          </div>
+
+          <label style="font-weight:600; font-size:0.9rem;">Enfoque / Objetivos:</label>
+          <textarea id="custom-form-focus" class="input-text-pro" rows="2" placeholder="Ej: Conversación fluida, viajes, negocios..."></textarea>
+
+          <button class="btn" style="background: #0284c7; margin-top: 1.5rem; font-size: 1.05rem;" onclick="calcularYEnviarCustomWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Calcular Tarifa y Enviar al WhatsApp del Owner</button>
+        </div>
+
+        <div style="background: #1e293b; padding: 2.5rem; border-radius: var(--radius); border: 1px solid #334155; max-width: 750px; margin: auto;">
+          <h3 style="color: #f8fafc; font-size: 1.3rem; margin-bottom: 12px;"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i> Leaderboard Exclusivo - Clases Personalizadas VIP</h3>
+          <ul class="lb-top-list" id="custom-classes-lb-list">
+            <li class="lb-top-item"><span>Sin alumnos VIP registrados</span><strong>0 Pts</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MI PERFIL -->
+      <div id="portal-perfil" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow); border: 1px solid #334155; max-width: 750px; margin: auto;">
+          <div style="display: flex; align-items: center; gap: 24px; border-bottom: 2px solid #334155; padding-bottom: 1.8rem; flex-wrap: wrap;">
+            <div style="width: 90px; height: 90px; background: #0f172a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; overflow: hidden; border: 3px solid var(--accent);">
+              <span id="profile-initial">U</span>
+            </div>
+            <div>
+              <h2 id="profile-name-display" style="font-size: 1.6rem; color: #f8fafc;">Estudiante Liroy</h2>
+              <p style="color: #94a3b8; margin-top: 4px;" id="profile-desc-display">Sin descripción</p>
+              <button class="btn" style="width: auto; padding: 0.5rem 1.2rem; font-size: 0.85rem; margin-top: 10px;" onclick="abrirConfigPerfil()"><i class="fa-solid fa-gear"></i> Configurar Perfil</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.8rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent);">
+            <h4 style="color: #38bdf8; margin-bottom: 6px;"><i class="fa-solid fa-shield-halved"></i> Idioma y Nivel Asignado</h4>
+            <h3 id="profile-assigned-language" style="font-size: 1.4rem; color: #f8fafc; margin-top: 4px;">⭐ Inglés — Nivel A1</h3>
+          </div>
+
+          <h3 style="margin-top: 1.8rem; color: #f8fafc; font-size: 1.2rem;"><i class="fa-solid fa-chart-line"></i> Progreso de Quizzes</h3>
+          <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; margin-top: 12px; border: 1px solid #334155;">
+            <p style="font-size: 1rem;"><strong>Quiz de Prueba:</strong> <span id="profile-score-prueba" style="color:#f59e0b; font-weight:bold;">0 / 12 Pts</span></p>
+            <p style="font-size: 1rem; margin-top: 6px;"><strong>Quiz de Nivel:</strong> <span id="profile-score-nivel" style="color:#4ade80; font-weight:bold;">0 / 12 Pts</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEAKING ZONE & CERTIFICADOS -->
+      <div id="portal-speaking" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; max-width: 750px; margin: auto; border: 1px solid #334155;">
+          <h2 class="section-title"><i class="fa-solid fa-comments"></i> Speaking Zone - Foro de Opinión</h2>
+          <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 12px;">Envía tus opiniones, quejas o preguntas directamente al Owner con formato automático.</p>
+          <div id="speaking-auto-header" style="background:#0f172a; padding:10px; border-radius:8px; font-size:0.85rem; color:#38bdf8; margin-bottom:12px; border:1px solid #334155;"></div>
+          <textarea id="speaking-text-msg" class="input-text-pro" rows="4" placeholder="Escribe tu mensaje aquí..."></textarea>
+          <button class="btn" style="background: #25d366; font-size: 1.05rem;" onclick="enviarMensajeSpeakingWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar Mensaje Directo al Owner</button>
+        </div>
+      </div>
+
+      <div id="portal-certificados" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; border: 1px solid #334155; text-align: center; max-width: 650px; margin: auto;">
+          <i class="fa-solid fa-award" style="font-size: 3.5rem; color: #d97706; margin-bottom: 1rem;"></i>
+          <h2>Solicitud de Certificado Oficial</h2>
+          <p style="color:#cbd5e1; font-size:0.9rem; margin-bottom:15px;">Introduce la clave secreta de un solo uso (proporcionada por el Owner).</p>
+          <input type="text" id="cert-code-input" class="input-pass" placeholder="Clave de un solo uso">
+          <input type="text" id="cert-full-name" class="input-pass" placeholder="Nombre y Apellido">
+          <select id="cert-idioma" class="input-pass" style="margin-top:10px;">
+            <option value="Inglés">Inglés</option>
+            <option value="Portugués">Portugués</option>
+            <option value="Francés">Francés</option>
+          </select>
+          <input type="text" id="cert-nivel" class="input-pass" placeholder="Nivel (Ej: B1)">
+          <textarea id="cert-desc" class="input-text-pro" rows="2" placeholder="Mini descripción..."></textarea>
+          <button class="btn" style="background: #d97706;" onclick="procesarCertificado()">Solicitar Diploma</button>
+          <div id="cert-announcement-box" style="display:none; margin-top:15px; color:#f59e0b; background:#0f172a; padding:15px; border-radius:10px; border:1px solid #f59e0b;">
+            <div style="font-size:2.5rem; margin-bottom:5px;">🤖🎉</div>
+            <h4 style="color:#f8fafc;">¡Certificado Solicitado con Éxito!</h4>
+            <p style="font-size:0.88rem; color:#cbd5e1; margin-top:5px;">Ya está en proceso. En 24 horas lo recibes. Toma captura y envíasela al Owner por WhatsApp.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL PROFESORES (Área exclusiva para docentes) -->
+      <div id="portal-profesores" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; max-width: 850px; margin: auto; border: 1px solid #334155;">
+          <h2 class="section-title"><i class="fa-solid fa-chalkboard-user"></i> Panel Docente (<span id="teacher-role-badge" style="color:var(--secondary);">Profesor</span>)</h2>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; background:#0f172a; padding:1.2rem; border-radius:10px; border:1px solid #334155;">
+            <div>
+              <label style="font-weight:700; font-size:0.85rem; color:#38bdf8;">Idioma:</label>
+              <select id="teacher-lang-select" class="input-pass" style="margin-top:5px;">
+                <option value="en">🇺🇸 Inglés</option>
+                <option value="pt">🇧🇷 Portugués</option>
+                <option value="fr">🇫🇷 Francés</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:700; font-size:0.85rem; color:#f59e0b;">Módulo:</label>
+              <select id="teacher-mod-select" class="input-pass" style="margin-top:5px;"></select>
+            </div>
+            <div>
+              <label style="font-weight:700; font-size:0.85rem; color:#4ade80;">Nivel:</label>
+              <select id="teacher-lvl-select" class="input-pass" style="margin-top:5px;">
+                <option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option>
+                <option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155;">
+              <label style="font-weight:700; font-size:0.9rem;">Cambiar Mi Contraseña Docente:</label>
+              <input type="password" id="teacher-new-pass" class="input-pass" placeholder="Nueva clave personal">
+              <button class="btn" style="margin-top:8px;" onclick="cambiarPasswordProfesorPersonal()">Actualizar Mi Clave</button>
+            </div>
+
+            <div style="background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155;">
+              <label style="font-weight:700; font-size:0.9rem;">Link de Meet:</label>
+              <input type="text" id="teacher-meet-url" class="input-pass" placeholder="https://meet.google.com/xxx">
+              <button class="btn" style="margin-top:8px;" onclick="guardarMeetClase()">Guardar Meet</button>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0f172a, #1e3a8a); padding: 1.8rem; border-radius: 12px; border: 2px solid #2563eb; margin-bottom: 15px;">
+            <h3 style="color: #f8fafc; margin-bottom: 6px;"><i class="fa-solid fa-film"></i> Subir Clase al Historial Permanente</h3>
+            <label style="font-weight:700; font-size:0.85rem;">Título / Tema:</label>
+            <input type="text" id="teacher-video-title" class="input-pass" placeholder="Ej: Clase 01" style="margin-bottom: 10px;">
+            <label style="font-weight:700; font-size:0.85rem;">Seleccionar Video (Máx. 3h):</label>
+            <input type="file" id="teacher-video-file" accept="video/*" class="input-pass" style="padding: 10px; cursor: pointer;" onchange="validarDuracionVideo(this)">
+            <p id="video-duration-status" style="font-size: 0.82rem; color: #94a3b8; margin-top: 6px;"></p>
+            <button class="btn" style="background: #16a34a; margin-top: 12px;" onclick="subirVideoHistorialProfesor()">Publicar Video</button>
+          </div>
+
+          <div style="background: #0f172a; padding: 1.8rem; border-radius: 12px; border: 1px solid #334155;">
+            <h3><i class="fa-solid fa-folder-plus"></i> Carpeta de Calificaciones (10 Cupos)</h3>
+            <div id="teacher-students-grades-rows"></div>
+            <button class="btn" style="background: #f59e0b; color:#0f172a; margin-top: 15px;" onclick="enviarNotasEstudiantesOwner()"><i class="fa-brands fa-whatsapp"></i> Enviar Notas al Owner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL OWNER SUPREMO -->
+      <div id="portal-owner" class="portal-section">
+        <div style="background: #1e293b; border-radius: var(--radius); padding: 2.5rem; border: 2px solid #f59e0b; max-width: 950px; margin: auto;">
+          <h2 class="section-title"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Panel Owner Supremo</h2>
+          
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #f59e0b; margin-bottom: 2rem;">
+            <h3>Control de Videos del Historial</h3>
+            <div id="owner-videos-control-list" style="display:flex; flex-direction:column; gap:10px; max-height: 250px; overflow-y: auto; margin-top:10px;"></div>
+          </div>
+
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3>Gestión Dinámica de Módulos (Activar / Desactivar / Agregar)</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+              <button class="btn" style="background:#16a34a; width:auto; margin:0;" onclick="agregarNuevoModuloOwner()">Agregar Módulo</button>
+            </div>
+            <div id="owner-modules-toggle-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3>Gestión de Profesores y Papelera de Betados</h3>
+            <div style="background:#1e293b; padding:1rem; border-radius:10px; margin-bottom:12px; border:1px solid #334155;">
+              <h4 style="font-size:0.95rem; color:#38bdf8; margin-bottom:8px;">Agregar Nuevo Profesor</h4>
+              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:8px;">
+                <input type="text" id="new-prof-name" class="input-pass" style="margin:0;" placeholder="Nombre">
+                <input type="text" id="new-prof-user" class="input-pass" style="margin:0;" placeholder="Usuario">
+                <input type="password" id="new-prof-pass" class="input-pass" style="margin:0;" placeholder="Contraseña">
+                <select id="new-prof-role" class="input-pass" style="margin:0;">
+                  <option value="Normal">Normal</option>
+                  <option value="Certificado">Certificado</option>
+                  <option value="Personalizado">Personalizado</option>
+                </select>
+              </div>
+              <button class="btn" style="background:#0284c7; margin-top:10px; width:auto;" onclick="crearNuevoProfesorOwner()">Registrar Profesor</button>
+            </div>
+
+            <div id="owner-teachers-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
+            <h4 style="color:#f87171; font-size:1rem; margin-top:15px; margin-bottom:8px;">Papelera (Betados)</h4>
+            <div id="owner-teachers-trash" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3>Directorio y Configuración de Alumnos</h3>
+            <div id="owner-students-directory-control" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3>Generar Claves de Certificados</h3>
+            <button class="btn" style="background:#d97706; width:auto; margin:0;" onclick="generarNuevaClaveCertificadoOwner()">Generar Clave Certificado</button>
+          </div>
+
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px; border:1px solid #334155; margin-bottom: 2rem;">
+            <h3>Cambiar Contraseñas Maestras</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+              <div>
+                <input type="password" id="input-new-owner-pass" class="input-pass" placeholder="Nueva clave Owner">
+                <button class="btn" style="background:#d97706; margin-top:5px;" onclick="cambiarClaveOwner()">Actualizar Owner</button>
+              </div>
+              <div>
+                <input type="password" id="input-new-custom-pass" class="input-pass" placeholder="Nueva clave Clases VIP">
+                <button class="btn" style="background:#0284c7; margin-top:5px;" onclick="cambiarClaveCustom()">Actualizar Clases VIP</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="modalHistorialClases">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:12px; margin-bottom:15px;">
+        <h3 id="historial-modal-title" style="color:#38bdf8;">Historial</h3>
+        <button onclick="cerrarModales()" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+      </div>
+      <div id="historial-videos-container"></div>
+      <button class="btn" style="background:#334155; margin-top:15px;" onclick="cerrarModales()">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalPasswordIdioma">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3 id="modal-idioma-title" style="color:#38bdf8;">🔐 Acceso</h3>
+      <input type="password" id="input-idioma-pass" class="input-pass" placeholder="••••••••">
+      <button class="btn" onclick="verificarPasswordIdioma()">Entrar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="configPerfilModal">
+    <div class="modal-card" style="max-width:450px;">
+      <h3>Configurar Perfil</h3>
+      <label style="font-size:0.9rem; font-weight:600;">Nombre:</label>
+      <input type="text" id="input-edit-name" class="input-pass">
+      <label style="font-size:0.9rem; font-weight:600; margin-top:8px; display:block;">Descripción:</label>
+      <input type="text" id="input-edit-desc" class="input-pass">
+      <button class="btn" onclick="guardarPerfilEstudiante()">Guardar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="quizModal">
+    <div class="modal-card" id="quizCard">
+      <h3 id="quizProgress">Pregunta 1</h3>
+      <p id="questionText" style="font-size: 1.1rem; margin: 1rem 0; font-weight:600;"></p>
+      <div id="optionsContainer"></div>
+      <div id="feedbackBox" class="feedback-box"></div>
+      <button id="btnNextQuestion" class="btn" style="display:none;" onclick="siguientePregunta()">Siguiente ➔</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginProfesorModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Acceso Profesores</h3>
+      <input type="text" id="prof-username-input" class="input-pass" placeholder="Usuario docente">
+      <input type="password" id="prof-pass-input" class="input-pass" placeholder="Contraseña secreta">
+      <button class="btn" onclick="loginProfesor()">Entrar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginCustomModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Clases Personalizadas VIP</h3>
+      <input type="password" id="custom-pass-input" class="input-pass" placeholder="Clave Custom">
+      <button class="btn" style="background:#0284c7;" onclick="verificarLoginCustom()">Ingresar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loginOwnerModal">
+    <div class="modal-card" style="max-width:380px; text-align:center;">
+      <h3>Login Owner</h3>
+      <input type="password" id="owner-pass-input" class="input-pass" placeholder="Clave Owner">
+      <button class="btn" style="background:#d97706;" onclick="loginOwner()">Entrar</button>
+      <button class="btn" style="background:#334155; margin-top:8px;" onclick="cerrarModales()">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    function safeJSONParse(key, fallback) {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    const listaPalabrasOfensivas = ["politica", "partido", "presidente", "gobierno", "groseria", "sexo", "maduro", "chavez", "oposicion", "puto", "puta", "mierda", "coño", "maldito", "carajo"];
+    function filtrarTextoConAsteriscos(texto) {
+      if (!texto) return "";
+      let tf = texto;
+      listaPalabrasOfensivas.forEach(p => { tf = tf.replace(new RegExp(p, "gi"), "*****"); });
+      return tf;
+    }
+
+    let totalModulos = parseInt(localStorage.getItem('liroy_total_modulos') || '9');
+    let claveOwnerGlobal = localStorage.getItem('claveOwnerGlobal') || "liroy2026";
+    let claveCustomGlobal = localStorage.getItem('claveCustomGlobal') || "CUSTOM2026";
+    let certificadosClavesUsadas = safeJSONParse('liroy_cert_claves_usadas', ['CERT-OWNER-2026']);
+    
+    let passwordsIdiomas = safeJSONParse('liroy_pass_idiomas', {"en":"ingles2026","pt":"portugues2026","fr":"frances2026"});
+    let profesoresRegistrados = safeJSONParse('liroy_profesores_reg', [
+      {id:1, nombre:"Profesor Mateo", user:"mateo", pass:"PROFESOR2026", tipo:"Normal"},
+      {id:2, "nombre":"Docente Liroy", user:"liroy", pass:"PROFESOR2026", tipo:"Personalizado"}
+    ]);
+    let profesoresPapelera = safeJSONParse('liroy_profesores_trash', []);
+
+    let idiomaSeleccionadoPendiente = null;
+    let idiomaActualActivo = 'en';
+    let profesorActualLogueado = null;
+
+    let listaAlumnosOficiales = safeJSONParse('liroy_alumnos_oficiales', []);
+    let modulosInhabilitados = safeJSONParse('modulosInhabilitados', {});
+    let datosClasesPorIdioma = safeJSONParse('liroy_datos_clases_idioma', {});
+    const niveles = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+    let dbVideos;
+    const requestDB = indexedDB.open("LiroyVideosHistorialDB", 1);
+    requestDB.onupgradeneeded = function(e) {
+      dbVideos = e.target.result;
+      if (!dbVideos.objectStoreNames.contains("videos")) {
+        dbVideos.createObjectStore("videos", { keyPath: "id", autoIncrement: true }).createIndex("scopeKey", "scopeKey", { unique: false });
+      }
+    };
+    requestDB.onsuccess = function(e) { dbVideos = e.target.result; };
+    requestDB.onerror = function(e) { console.warn("IndexedDB no disponible o bloqueado."); };
+
+    let videoSeleccionadoValido = null;
+    let duracionVideoTexto = "";
+
+    function validarDuracionVideo(input) {
+      const file = input.files[0];
+      const statusEl = document.getElementById('video-duration-status');
+      videoSeleccionadoValido = null;
+      if (!file) { statusEl.innerText = ""; return; }
+      statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verificando...`;
+      const vt = document.createElement('video');
+      vt.preload = 'metadata';
+      vt.onloadedmetadata = function() {
+        window.URL.revokeObjectURL(vt.src);
+        if (vt.duration > 3 * 3600) {
+          statusEl.innerHTML = `<span style="color:#f87171;">❌ Supera 3 horas.</span>`;
+          input.value = "";
+        } else {
+          const hrs = Math.floor(vt.duration / 3600);
+          const mins = Math.floor((vt.duration % 3600) / 60);
+          duracionVideoTexto = `${hrs > 0 ? hrs + 'h ' : ''}${mins}m`;
+          statusEl.innerHTML = `<span style="color:#4ade80;">✅ Válido (${duracionVideoTexto}).</span>`;
+          videoSeleccionadoValido = file;
+        }
+      };
+      vt.src = URL.createObjectURL(file);
+    }
+
+    function subirVideoHistorialProfesor() {
+      const lang = document.getElementById('teacher-lang-select').value;
+      const mod = document.getElementById('teacher-mod-select').value;
+      const lvl = document.getElementById('teacher-lvl-select').value;
+      const title = filtrarTextoConAsteriscos(document.getElementById('teacher-video-title').value.trim());
+
+      if (!title || !videoSeleccionadoValido || !dbVideos) { alert("Título y video requeridos."); return; }
+      const scopeKey = `${lang}_${mod}_${lvl}`;
+      const record = { scopeKey, lang, mod, lvl, title, teacher: profesorActualLogueado ? profesorActualLogueado.nombre : "Docente", duration: duracionVideoTexto, date: new Date().toLocaleDateString('es-ES'), fileBlob: videoSeleccionadoValido };
+      
+      try {
+        dbVideos.transaction(["videos"], "readwrite").objectStore("videos").add(record).onsuccess = () => {
+          alert(`✅ ¡Clase "${title}" publicada en el Módulo ${mod} (${lvl})!`);
+          document.getElementById('teacher-video-title').value = "";
+          document.getElementById('teacher-video-file').value = "";
+          document.getElementById('video-duration-status').innerText = "";
+          videoSeleccionadoValido = null;
+        };
+      } catch(err) {
+        alert("Error al guardar el video en la base de datos local.");
+      }
+    }
+
+    function abrirHistorialModulo(m, lvl) {
+      const scopeKey = `${idiomaActualActivo}_${m}_${lvl}`;
+      const nombres = { en: 'Inglés', pt: 'Portugués', fr: 'Francés' };
+      document.getElementById('historial-modal-title').innerHTML = `Historial: ${nombres[idiomaActualActivo]} — Módulo ${m} (${lvl})`;
+      const container = document.getElementById('historial-videos-container');
+      container.innerHTML = `<p style="text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i></p>`;
+      document.getElementById('modalHistorialClases').style.display = 'flex';
+
+      if (!dbVideos) { container.innerHTML = `<p>Sin videos.</p>`; return; }
+      try {
+        dbVideos.transaction(["videos"], "readonly").objectStore("videos").index("scopeKey").getAll(scopeKey).onsuccess = function(e) {
+          const vids = e.target.result;
+          if (!vids || vids.length === 0) { container.innerHTML = `<p style="text-align:center; color:#cbd5e1;">Sin clases grabadas en este nivel.</p>`; return; }
+          container.innerHTML = '';
+          vids.forEach(v => {
+            const u = URL.createObjectURL(v.fileBlob);
+            container.innerHTML += `<div class="history-video-card"><div class="history-video-meta"><span>🎬 ${v.title}</span><span class="badge-duration">${v.duration}</span></div><video controls style="width:100%; border-radius:10px; max-height:250px;"><source src="${u}" type="video/mp4"></video></div>`;
+          });
+        };
+      } catch(err) {
+        container.innerHTML = `<p style="text-align:center; color:#f87171;">Error al cargar historial.</p>`;
+      }
+    }
+
+    function cargarListaVideosOwner() {
+      const c = document.getElementById('owner-videos-control-list');
+      if (!c || !dbVideos) return;
+      try {
+        dbVideos.transaction(["videos"], "readonly").objectStore("videos").getAll().onsuccess = function(e) {
+          const vids = e.target.result;
+          if (!vids || vids.length === 0) { c.innerHTML = `<p style="color:#64748b; font-size:0.85rem;">No hay videos.</p>`; return; }
+          c.innerHTML = '';
+          vids.forEach(v => {
+            c.innerHTML += `<div style="background:#1e293b; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span style="font-size:0.88rem;">[${v.lang.toUpperCase()} | Mod ${v.mod}-${v.lvl}] ${v.title}</span><button onclick="eliminarVideoOwner(${v.id})" style="background:#dc2626; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Bajar</button></div>`;
+          });
+        };
+      } catch(err) {
+        c.innerHTML = `<p style="color:#64748b; font-size:0.85rem;">Sin acceso a videos.</p>`;
+      }
+    }
+
+    function eliminarVideoOwner(id) {
+      if (!confirm("¿Eliminar este video?")) return;
+      try {
+        dbVideos.transaction(["videos"], "readwrite").objectStore("videos").delete(id).onsuccess = () => cargarListaVideosOwner();
+      } catch(err) {}
+    }
+
+    function quitarSplash() {
+      const s = document.getElementById('welcome-splash');
+      if (s) {
+        s.style.pointerEvents = 'none';
+        s.style.opacity = '0';
+        setTimeout(() => {
+          s.style.display = 'none';
+        }, 600);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(quitarSplash, 2500);
+      try {
+        pobladorSelectsModulos();
+        renderizarGrillaIdiomas();
+        renderizarModulosNormales();
+        renderizarLeaderboards();
+        cargarPerfil();
+        renderizarDirectorioAlumnos();
+        construirFormularioNotasDocente();
+        actualizarSpeakingZoneHeader();
+      } catch (err) {
+        console.error("Error durante la inicialización:", err);
+      }
+    });
+
+    function renderizarGrillaIdiomas() {
+      const grid = document.getElementById('languages-grid-container');
+      if(!grid) return;
+      grid.innerHTML = '';
+      const list = [
+        { id: 'en', name: '🇺🇸 Inglés Liroy' },
+        { id: 'pt', name: '🇧🇷 Portugués Liroy' },
+        { id: 'fr', name: '🇫🇷 Francés Liroy' }
+      ];
+      list.forEach(i => {
+        grid.innerHTML += `<div class="lang-card active"><span class="badge-status badge-active">Activo</span><h3>${i.name}</h3><button class="btn" onclick="seleccionarIdiomaPortal('${i.id}')">Entrar al Portal</button></div>`;
+      });
+    }
+
+    function seleccionarIdiomaPortal(id) {
+      idiomaSeleccionadoPendiente = id;
+      document.getElementById('modal-idioma-title').innerText = `🔐 Contraseña (${id.toUpperCase()})`;
+      document.getElementById('input-idioma-pass').value = '';
+      document.getElementById('modalPasswordIdioma').style.display = 'flex';
+    }
+
+    function verificarPasswordIdioma() {
+      const pass = document.getElementById('input-idioma-pass').value;
+      const id = idiomaSeleccionadoPendiente;
+      if(pass === passwordsIdiomas[id]) {
+        cerrarModales();
+        const o = document.getElementById('language-transition-overlay');
+        o.classList.add('active');
+        setTimeout(() => {
+          idiomaActualActivo = id;
+          const nombres = { en: 'Inglés', pt: 'Portugués', fr: 'Francés' };
+          document.getElementById('current-lang-title').innerText = nombres[id];
+          document.getElementById('current-lang-lb-title').innerText = nombres[id];
+          renderizarModulosNormales();
+          renderizarLeaderboards();
+          actualizarSpeakingZoneHeader();
+          setTimeout(() => o.classList.remove('active'), 800);
+        }, 900);
+      } else alert('❌ Contraseña incorrecta.');
+    }
+
+    function pobladorSelectsModulos() {
+      const s = document.getElementById('teacher-mod-select');
+      if(s) s.innerHTML = ''; 
+      for(let i=1; i<=totalModulos; i++) { if(s) s.innerHTML += `<option value="${i}">Módulo ${i}</option>`; }
+    }
+
+    function cerrarModales() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+    function cambiarPortal(p) {
+      document.querySelectorAll('.portal-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(`portal-${p}`).classList.add('active');
+      if(p === 'owner') { 
+        cargarListaVideosOwner(); 
+        renderizarOwnerListasProfesores(); 
+        renderizarOwnerModulosToggle();
+      }
+      if(p === 'personalizadas') renderizarLeaderboardPersonalizadas();
+    }
+
+    function toggleSidebarStudents() {
+      const b = document.getElementById('sidebarStudentsBox');
+      const c = document.getElementById('sidebar-chevron');
+      b.classList.toggle('open');
+      c.className = b.classList.contains('open') ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right";
+    }
+
+    function registrarEstudianteAutomatico(n) {
+      if(!n) return;
+      let p = safeJSONParse('perfilUsuarioLocal', {});
+      if(!p.nombre) {
+        p = { nombre: n, desc: "Estudiante Liroy", scorePrueba: 0, scoreNivel: 0, privado: false, idiomaAsignado: "Inglés", nivelAsignado: "A1" };
+        localStorage.setItem('perfilUsuarioLocal', JSON.stringify(p));
+        if(!listaAlumnosOficiales.some(s => s.nombre === n)) {
+          listaAlumnosOficiales.push({ id: Date.now(), nombre: n, privado: false, idioma: "Inglés", nivel: "A1" });
+          localStorage.setItem('liroy_alumnos_oficiales', JSON.stringify(listaAlumnosOficiales));
+        }
+      }
+      renderizarDirectorioAlumnos();
+      actualizarSpeakingZoneHeader();
+    }
+
+    function renderizarDirectorioAlumnos() {
+      const c = document.getElementById('students-directory-list');
+      if(!c) return;
+      c.innerHTML = '';
+      const mi = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante","privado":false});
+      if(!mi.privado) {
+        c.innerHTML += `<div class="student-list-item"><div class="student-name">👤 ${mi.nombre}</div><span class="student-badge" style="background:#2563eb;">Tú (Público)</span></div>`;
+      } else {
+        c.innerHTML += `<div class="student-list-item"><div class="student-name">🔒 Tu Perfil (Privado)</div><span class="student-badge" style="background:#334155;">Candado Activo</span></div>`;
+      }
+      listaAlumnosOficiales.forEach(st => {
+        if(!st.privado) {
+          c.innerHTML += `<div class="student-list-item"><div class="student-name">⭐ ${st.nombre}</div><span class="student-badge" style="background:#16a34a;">Activo</span></div>`;
+        }
+      });
+    }
+
+    function cargarPerfil() {
+      const p = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante Liroy","desc":"Sin descripción","scorePrueba":0,"scoreNivel":0,"privado":false,"idiomaAsignado":"Inglés","nivelAsignado":"A1"});
+      document.getElementById('profile-name-display').innerText = p.nombre;
+      document.getElementById('profile-desc-display').innerText = p.desc;
+      document.getElementById('profile-score-prueba').innerText = `${p.scorePrueba || 0} / 12 Pts`;
+      document.getElementById('profile-score-nivel').innerText = `${p.scoreNivel || 0} / 12 Pts`;
+      document.getElementById('profile-assigned-language').innerText = `⭐ ${p.idiomaAsignado || 'Inglés'} — Nivel ${p.nivelAsignado || 'A1'}`;
+      registrarEstudianteAutomatico(p.nombre);
+    }
+
+    function abrirConfigPerfil() {
+      const p = safeJSONParse('perfilUsuarioLocal', {});
+      document.getElementById('input-edit-name').value = p.nombre || '';
+      document.getElementById('input-edit-desc').value = p.desc || '';
+      document.getElementById('configPerfilModal').style.display = 'flex';
+    }
+
+    function guardarPerfilEstudiante() {
+      let name = filtrarTextoConAsteriscos(document.getElementById('input-edit-name').value.trim());
+      let desc = filtrarTextoConAsteriscos(document.getElementById('input-edit-desc').value.trim());
+      let p = safeJSONParse('perfilUsuarioLocal', {});
+      p.nombre = name || "Estudiante Liroy";
+      p.desc = desc;
+      localStorage.setItem('perfilUsuarioLocal', JSON.stringify(p));
+      cargarPerfil();
+      renderizarDirectorioAlumnos();
+      cerrarModales();
+    }
+
+    function actualizarSpeakingZoneHeader() {
+      const p = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante", "idiomaAsignado":"Inglés"});
+      const h = document.getElementById('speaking-auto-header');
+      if(h) h.innerHTML = `👤 Envíate como: <strong>${p.nombre}</strong> | 🌐 Idioma: <strong>${(p.idiomaAsignado || idiomaActualActivo).toUpperCase()}</strong>`;
+    }
+
+    function enviarMensajeSpeakingWhatsApp() {
+      const p = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante"});
+      const m = document.getElementById('speaking-text-msg').value.trim();
+      if(!m) { alert("Escribe un mensaje."); return; }
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(`Hola Owner, soy el alumno ${p.nombre} del idioma ${idiomaActualActivo.toUpperCase()}. Lo que le quiero decir es: ${m}`)}`, '_blank');
+    }
+
+    function renderizarModulosNormales() {
+      const c = document.getElementById('modulesContainer');
+      if(!c) return;
+      c.innerHTML = '';
+
+      for (let m = 1; m <= totalModulos; m++) {
+        if(modulosInhabilitados[m]) continue; // Módulo desactivado por el Owner
+        let html = `<div class="folder-card"><div class="folder-header" onclick="toggleFolder('mod${m}')"><span><i class="fa-solid fa-folder"></i> Módulo ${m} (${idiomaActualActivo.toUpperCase()})</span><i class="fa-solid fa-chevron-down"></i></div><div class="folder-content" id="mod${m}">`;
+        niveles.forEach(lvl => {
+          const sk = `${idiomaActualActivo}_${m}_${lvl}`;
+          const conf = datosClasesPorIdioma[sk] || { pass: `MOD${m}-${lvl}`, meet: 'https://meet.google.com/' };
+          html += `<div class="classroom-box"><h4>Nivel ${lvl}</h4><input type="password" id="pass-normal-${sk}" class="input-pass" placeholder="Clave"><button class="btn" onclick="verificarClase(${m}, '${lvl}')">Ingresar</button><div id="content-normal-${sk}" style="display:none; margin-top:10px;"><a href="${conf.meet}" target="_blank" class="btn" style="background:#16a34a;"><i class="fa-solid fa-video"></i> Meet</a><button class="btn btn-history" onclick="abrirHistorialModulo(${m}, '${lvl}')"><i class="fa-solid fa-clock-rotate-left"></i> Historial Módulo ${m} (${lvl})</button></div></div>`;
+        });
+        html += `</div></div>`;
+        c.innerHTML += html;
+      }
+    }
+
+    function toggleFolder(id) { document.getElementById(id).classList.toggle('open'); }
+    function abrirAccesoClasesPersonalizadas() { document.getElementById('loginCustomModal').style.display = 'flex'; }
+    function verificarLoginCustom() {
+      if(document.getElementById('custom-pass-input').value === claveCustomGlobal) { cerrarModales(); cambiarPortal('personalizadas'); }
+      else alert('Clave incorrecta.');
+    }
+
+    function calcularYEnviarCustomWhatsApp() {
+      const lang = document.getElementById('custom-form-lang').value;
+      const country = document.getElementById('custom-form-country').value.trim();
+      const age = document.getElementById('custom-form-age').value.trim();
+      const people = document.getElementById('custom-form-people').value;
+      const startdate = document.getElementById('custom-form-startdate').value;
+      const days = document.getElementById('custom-form-days').value;
+      const hours = document.getElementById('custom-form-hours').value;
+      if(!country || !age || !startdate) { alert('Completa los campos.'); return; }
+      const totalUSD = Math.round(parseFloat(days) * parseFloat(hours) * 8 * 4);
+      
+      let p = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante"});
+      let customLb = safeJSONParse('liroy_lb_custom', []);
+      customLb.push({ name: p.nombre, score: 50, lang: lang });
+      localStorage.setItem('liroy_lb_custom', JSON.stringify(customLb));
+
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(`¡Hola Owner! ⚙️ Clases VIP:\n- Idioma: ${lang}\n- País: ${country}\n- Edad: ${age}\n- Personas: ${people}\n- Inicio: ${startdate}\n- Precio: $${totalUSD} USD`)}`, '_blank');
+    }
+
+    function renderizarLeaderboardPersonalizadas() {
+      const c = document.getElementById('custom-classes-lb-list');
+      if(!c) return;
+      let lb = safeJSONParse('liroy_lb_custom', []);
+      if(lb.length === 0) { c.innerHTML = `<li class="lb-top-item"><span>Sin alumnos VIP</span><strong>0 Pts</strong></li>`; return; }
+      c.innerHTML = '';
+      lb.forEach((i, idx) => { c.innerHTML += `<li class="lb-top-item"><span>${['🥇','🥈','🥉'][idx] || '⭐'} ${i.name} (${i.lang})</span><strong>${i.score} Pts</strong></li>`; });
+    }
+
+    function verificarClase(m, lvl) {
+      const sk = `${idiomaActualActivo}_${m}_${lvl}`;
+      const conf = datosClasesPorIdioma[sk] || { pass: `MOD${m}-${lvl}` };
+      if(document.getElementById(`pass-normal-${sk}`).value === conf.pass) {
+        document.getElementById(`content-normal-${sk}`).style.display = 'block';
+        alert(`¡Acceso concedido al Módulo ${m} (${lvl})!`);
+      } else alert('Contraseña incorrecta.');
+    }
+
+    const bancoPrueba = [
+      { q: "1. Complete: 'Hello, ___ name is John.'", options: ["my", "your", "his"], correct: "my" },
+      { q: "2. Plural de 'Child':", options: ["Children", "Childs", "Childrens"], correct: "Children" },
+      { q: "3. 'They ___ students.'", options: ["are", "is", "am"], correct: "are" },
+      { q: "4. Opuesto de 'Hot':", options: ["Cold", "Warm", "Dry"], correct: "Cold" },
+      { q: "5. 'I live ___ Caracas.'", options: ["in", "on", "at"], correct: "in" },
+      { q: "6. 'She ___ speak English.'", options: ["can", "cans", "is"], correct: "can" },
+      { q: "7. 'What time ___ it?'", options: ["is", "are", "has"], correct: "is" },
+      { q: "8. Pasado de 'Go':", options: ["Went", "Gone", "Goed"], correct: "Went" },
+      { q: "9. 'This is ___ book.'", options: ["a", "an", "two"], correct: "a" },
+      { q: "10. 'We ___ watching TV.'", options: ["are", "is", "be"], correct: "are" },
+      { q: "11. Días en una semana:", options: ["Seven", "Six", "Eight"], correct: "Seven" },
+      { q: "12. 'Thank you ___ much.'", options: ["very", "many", "more"], correct: "very" }
+    ];
+
+    let preguntasPartida = [], indice = 0, scoreActual = 0, tipoQuizActual = '';
+    function mezclar(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+    function iniciarQuizPrueba() { tipoQuizActual = 'prueba'; preguntasPartida = mezclar(bancoPrueba); indice = 0; scoreActual = 0; document.getElementById('quizModal').style.display = 'flex'; mostrarQ(); }
+    function iniciarQuizNivel() { tipoQuizActual = 'nivel'; preguntasPartida = mezclar(bancoPrueba); indice = 0; scoreActual = 0; document.getElementById('quizModal').style.display = 'flex'; mostrarQ(); }
+
+    function mostrarQ() {
+      document.getElementById('feedbackBox').style.display = 'none';
+      document.getElementById('btnNextQuestion').style.display = 'none';
+      if(indice >= preguntasPartida.length) {
+        let p = safeJSONParse('perfilUsuarioLocal', {});
+        if(tipoQuizActual === 'prueba') p.scorePrueba = scoreActual; else p.scoreNivel = scoreActual;
+        localStorage.setItem('perfilUsuarioLocal', JSON.stringify(p));
+        cargarPerfil();
+        document.getElementById('quizCard').innerHTML = `<h3>🎉 Finalizado</h3><p>Puntuación: ${scoreActual}/12</p><button class="btn" onclick="location.reload();">Aceptar</button>`;
+        return;
+      }
+      const q = preguntasPartida[indice];
+      document.getElementById('quizProgress').innerText = `Pregunta ${indice+1} de 12`;
+      document.getElementById('questionText').innerText = q.q;
+      const c = document.getElementById('optionsContainer'); c.innerHTML = '';
+      q.options.forEach(opt => {
+        const b = document.createElement('button'); b.className = 'option-btn'; b.innerText = opt;
+        b.onclick = () => {
+          document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+          const fb = document.getElementById('feedbackBox');
+          if(opt === q.correct) { scoreActual++; fb.className = 'feedback-box correct'; fb.innerText = '¡Correcto!'; }
+          else { fb.className = 'feedback-box incorrect'; fb.innerText = `Incorrecto (${q.correct})`; }
+          fb.style.display = 'block'; document.getElementById('btnNextQuestion').style.display = 'block';
+        };
+        c.appendChild(b);
+      });
+    }
+    function siguientePregunta() { indice++; mostrarQ(); }
+
+    function renderizarLeaderboards() {
+      const c = document.getElementById('leaderboardsFoldersContainer');
+      if(!c) return;
+      c.innerHTML = '';
+      let p = safeJSONParse('perfilUsuarioLocal', {"nombre":"Estudiante","scoreNivel":12});
+      for (let m = 1; m <= totalModulos; m++) {
+        if(modulosInhabilitados[m]) continue;
+        c.innerHTML += `<div class="lb-folder-card"><div class="lb-folder-header" onclick="toggleFolder('lb-mod${m}')"><span><i class="fa-solid fa-trophy"></i> Leaderboard - Módulo ${m} (${idiomaActualActivo.toUpperCase()})</span><i class="fa-solid fa-chevron-down"></i></div><div class="lb-folder-content" id="lb-mod${m}"><ul class="lb-top-list"><li class="lb-top-item"><span>🥇 ${p.nombre}</span><strong>${p.scoreNivel || 10} Pts</strong></li></ul></div></div>`;
+      }
+    }
+
+    function abrirLoginProfesor() { document.getElementById('loginProfesorModal').style.display = 'flex'; }
+    function loginProfesor() {
+      const u = document.getElementById('prof-username-input').value.trim();
+      const p = document.getElementById('prof-pass-input').value;
+      const prof = profesoresRegistrados.find(x => x.user === u && x.pass === p);
+      if(prof) {
+        profesorActualLogueado = prof;
+        document.getElementById('teacher-role-badge').innerText = `Profesor ${prof.tipo}`;
+        cerrarModales();
+        cambiarPortal('profesores');
+        alert(`¡Bienvenido docente ${prof.nombre} (${prof.tipo})!`);
+      } else alert('Usuario o contraseña incorrectos.');
+    }
+
+    function cambiarPasswordProfesorPersonal() {
+      const nueva = document.getElementById('teacher-new-pass').value;
+      if(!nueva || !profesorActualLogueado) { alert("Introduce una contraseña."); return; }
+      profesorActualLogueado.pass = nueva;
+      let idx = profesoresRegistrados.findIndex(x => x.id === profesorActualLogueado.id);
+      if(idx !== -1) profesoresRegistrados[idx] = profesorActualLogueado;
+      localStorage.setItem('liroy_profesores_reg', JSON.stringify(profesoresRegistrados));
+      alert("✅ Contraseña docente actualizada.");
+    }
+
+    function construirFormularioNotasDocente() {
+      const c = document.getElementById('teacher-students-grades-rows');
+      if(!c) return;
+      c.innerHTML = '';
+      for(let i=1; i<=10; i++) {
+        c.innerHTML += `<div style="background:#1e293b; padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid #334155; display:grid; grid-template-columns: 2fr 1fr 3fr; gap:8px;"><input type="text" id="t-est-${i}" class="input-pass" style="margin:0;" placeholder="Alumno ${i}"><input type="number" id="t-nota-${i}" class="input-pass" style="margin:0;" placeholder="Puntos"><input type="text" id="t-opin-${i}" class="input-pass" style="margin:0;" placeholder="Comportamiento"></div>`;
+      }
+    }
+
+    function enviarNotasEstudiantesOwner() {
+      let r = "📋 *Reporte de Calificaciones Docente*:\n\n";
+      for(let i=1; i<=10; i++) {
+        let est = document.getElementById(`t-est-${i}`).value.trim();
+        let nota = document.getElementById(`t-nota-${i}`).value.trim();
+        let opin = document.getElementById(`t-opin-${i}`).value.trim();
+        if(est) r += `- ${est}: ${nota} Pts | Opinión: ${opin}\n`;
+      }
+      window.open(`https://api.whatsapp.com/send?phone=584125952360&text=${encodeURIComponent(r)}`, '_blank');
+    }
+
+    function guardarMeetClase() {
+      const lang = document.getElementById('teacher-lang-select').value;
+      const m = document.getElementById('teacher-mod-select').value;
+      const lvl = document.getElementById('teacher-lvl-select').value;
+      const sk = `${lang}_${m}_${lvl}`;
+      const meet = document.getElementById('teacher-meet-url').value;
+      if(!datosClasesPorIdioma[sk]) datosClasesPorIdioma[sk] = {};
+      datosClasesPorIdioma[sk].meet = meet;
+      localStorage.setItem('liroy_datos_clases_idioma', JSON.stringify(datosClasesPorIdioma));
+      alert("✅ Link Meet guardado.");
+    }
+
+    function abrirLoginOwner() { document.getElementById('loginOwnerModal').style.display = 'flex'; }
+    function loginOwner() {
+      if(document.getElementById('owner-pass-input').value === claveOwnerGlobal) { cerrarModales(); cambiarPortal('owner'); }
+      else alert('Clave incorrecta.');
+    }
+
+    function renderizarOwnerListasProfesores() {
+      const c = document.getElementById('owner-teachers-list');
+      const tc = document.getElementById('owner-teachers-trash');
+      if(!c || !tc) return;
+      c.innerHTML = '';
+      profesoresRegistrados.forEach(p => {
+        c.innerHTML += `
+          <div style="background:#1e293b; padding:12px; border-radius:8px; display:flex; flex-direction:column; gap:8px; border:1px solid #334155;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span>👨‍🏫 <strong>${p.nombre}</strong> [Rol: <strong>${p.tipo}</strong>] (User: <code>${p.user}</code>)</span>
+              <div style="display:flex; gap:6px;">
+                <button onclick="eliminarProfesorOwner(${p.id})" style="background:#dc2626; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Betar / Eliminar</button>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="password" id="owner-change-p-${p.id}" class="input-pass" style="margin:0; font-size:0.85rem; padding:4px 8px;" placeholder="Nueva contraseña">
+              <button onclick="ownerCambiarPasswordProfesor(${p.id})" class="btn" style="background:#0284c7; margin:0; padding:5px 10px; font-size:0.85rem; width:auto;">Cambiar Clave</button>
+            </div>
+          </div>`;
+      });
+
+      tc.innerHTML = profesoresPapelera.length === 0 ? `<p style="font-size:0.82rem; color:#64748b;">Papelera vacía.</p>` : '';
+      profesoresPapelera.forEach(p => {
+        tc.innerHTML += `<div style="background:#1e293b; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span>❌ ${p.nombre} (${p.user})</span><button onclick="restaurarProfesorOwner(${p.id})" style="background:#16a34a; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Reintegrar</button></div>`;
+      });
+
+      const dc = document.getElementById('owner-students-directory-control');
+      dc.innerHTML = '';
+      listaAlumnosOficiales.forEach((st, idx) => {
+        dc.innerHTML += `
+          <div style="background:#1e293b; padding:12px; border-radius:8px; display:flex; flex-direction:column; gap:8px; border:1px solid #334155;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span>👤 <strong>${st.nombre}</strong> | Idioma: <strong>${st.idioma || 'Inglés'}</strong> | Nivel: <strong>${st.nivel || 'A1'}</strong> | ${st.privado ? '🔒 Privado' : '🔓 Público'}</span>
+              <div style="display:flex; gap:6px;">
+                <button onclick="toggleCandadoAlumno(${idx})" style="background:#0284c7; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">${st.privado ? 'Quitar Candado' : 'Poner Candado'}</button>
+                <button onclick="eliminarAlumnoOwner(${idx})" style="background:#dc2626; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Eliminar</button>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select id="owner-st-lang-${idx}" class="input-pass" style="margin:0; font-size:0.85rem; padding:4px;">
+                <option value="Inglés" ${st.idioma==='Inglés'?'selected':''}>Inglés</option>
+                <option value="Portugués" ${st.idioma==='Portugués'?'selected':''}>Portugués</option>
+                <option value="Francés" ${st.idioma==='Francés'?'selected':''}>Francés</option>
+              </select>
+              <select id="owner-st-lvl-${idx}" class="input-pass" style="margin:0; font-size:0.85rem; padding:4px;">
+                <option value="A1" ${st.nivel==='A1'?'selected':''}>A1</option>
+                <option value="A2" ${st.nivel==='A2'?'selected':''}>A2</option>
+                <option value="B1" ${st.nivel==='B1'?'selected':''}>B1</option>
+                <option value="B2" ${st.nivel==='B2'?'selected':''}>B2</option>
+                <option value="C1" ${st.nivel==='C1'?'selected':''}>C1</option>
+                <option value="C2" ${st.nivel==='C2'?'selected':''}>C2</option>
+              </select>
+              <button onclick="ownerGuardarIdiomaNivelAlumno(${idx})" class="btn" style="background:#16a34a; margin:0; padding:5px 10px; font-size:0.85rem; width:auto;">Actualizar Nivel</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function crearNuevoProfesorOwner() {
+      const name = document.getElementById('new-prof-name').value.trim();
+      const user = document.getElementById('new-prof-user').value.trim();
+      const pass = document.getElementById('new-prof-pass').value;
+      const tipo = document.getElementById('new-prof-role').value;
+      if(!name || !user || !pass) { alert("Completa todos los campos del profesor."); return; }
+      profesoresRegistrados.push({ id: Date.now(), nombre: name, user: user, pass: pass, tipo: tipo });
+      localStorage.setItem('liroy_profesores_reg', JSON.stringify(profesoresRegistrados));
+      document.getElementById('new-prof-name').value = '';
+      document.getElementById('new-prof-user').value = '';
+      document.getElementById('new-prof-pass').value = '';
+      renderizarOwnerListasProfesores();
+      alert(`✅ Profesor ${name} (${tipo}) registrado con éxito.`);
+    }
+
+    function ownerCambiarPasswordProfesor(id) {
+      const nueva = document.getElementById(`owner-change-p-${id}`).value;
+      if(!nueva) { alert("Introduce la nueva contraseña."); return; }
+      let p = profesoresRegistrados.find(x => x.id === id);
+      if(p) {
+        p.pass = nueva;
+        localStorage.setItem('liroy_profesores_reg', JSON.stringify(profesoresRegistrados));
+        alert(`✅ Contraseña del profesor ${p.nombre} actualizada por el Owner.`);
+        document.getElementById(`owner-change-p-${id}`).value = '';
+      }
+    }
+
+    function eliminarProfesorOwner(id) {
+      let p = profesoresRegistrados.find(x => x.id === id);
+      if(p) {
+        profesoresRegistrados = profesoresRegistrados.filter(x => x.id !== id);
+        profesoresPapelera.push(p);
+        localStorage.setItem('liroy_profesores_reg', JSON.stringify(profesoresRegistrados));
+        localStorage.setItem('liroy_profesores_trash', JSON.stringify(profesoresPapelera));
+        renderizarOwnerListasProfesores();
+        alert("✅ Profesor betado y enviado a la papelera (acceso revocado).");
+      }
+    }
+
+    function restaurarProfesorOwner(id) {
+      let p = profesoresPapelera.find(x => x.id === id);
+      if(p) {
+        profesoresPapelera = profesoresPapelera.filter(x => x.id !== id);
+        profesoresRegistrados.push(p);
+        localStorage.setItem('liroy_profesores_reg', JSON.stringify(profesoresRegistrados));
+        localStorage.setItem('liroy_profesores_trash', JSON.stringify(profesoresPapelera));
+        renderizarOwnerListasProfesores();
+        alert("✅ Profesor reintegrado.");
+      }
+    }
+
+    function toggleCandadoAlumno(idx) {
+      listaAlumnosOficiales[idx].privado = !listaAlumnosOficiales[idx].privado;
+      localStorage.setItem('liroy_alumnos_oficiales', JSON.stringify(listaAlumnosOficiales));
+      renderizarDirectorioAlumnos();
+      renderizarOwnerListasProfesores();
+    }
+
+    function ownerGuardarIdiomaNivelAlumno(idx) {
+      const lang = document.getElementById(`owner-st-lang-${idx}`).value;
+      const lvl = document.getElementById(`owner-st-lvl-${idx}`).value;
+      listaAlumnosOficiales[idx].idioma = lang;
+      listaAlumnosOficiales[idx].nivel = lvl;
+      localStorage.setItem('liroy_alumnos_oficiales', JSON.stringify(listaAlumnosOficiales));
+      
+      // Si es el usuario local actual, actualizar perfil también
+      let localP = safeJSONParse('perfilUsuarioLocal', {});
+      if(localP.nombre === listaAlumnosOficiales[idx].nombre) {
+        localP.idiomaAsignado = lang;
+        localP.nivelAsignado = lvl;
+        localStorage.setItem('perfilUsuarioLocal', JSON.stringify(localP));
+        cargarPerfil();
+        actualizarSpeakingZoneHeader();
+      }
+      alert(`✅ Nivel e idioma actualizado para ${listaAlumnosOficiales[idx].nombre}.`);
+    }
+
+    function eliminarAlumnoOwner(idx) {
+      listaAlumnosOficiales.splice(idx, 1);
+      localStorage.setItem('liroy_alumnos_oficiales', JSON.stringify(listaAlumnosOficiales));
+      renderizarDirectorioAlumnos();
+      renderizarOwnerListasProfesores();
+    }
+
+    function renderizarOwnerModulosToggle() {
+      const c = document.getElementById('owner-modules-toggle-list');
+      if(!c) return;
+      c.innerHTML = '';
+      for(let i=1; i<=totalModulos; i++) {
+        const inhabilitado = modulosInhabilitados[i];
+        c.innerHTML += `
+          <div style="background:#1e293b; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>📂 Módulo ${i}</span>
+            <button onclick="toggleInhabilitarModulo(${i})" style="background:${inhabilitado ? '#16a34a' : '#dc2626'}; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">
+              ${inhabilitado ? 'Activar Módulo' : 'Desactivar Módulo'}
+            </button>
+          </div>`;
+      }
+    }
+
+    function toggleInhabilitarModulo(m) {
+      modulosInhabilitados[m] = !modulosInhabilitados[m];
+      localStorage.setItem('modulosInhabilitados', JSON.stringify(modulosInhabilitados));
+      renderizarOwnerModulosToggle();
+      renderizarModulosNormales();
+      renderizarLeaderboards();
+    }
+
+    function agregarNuevoModuloOwner() {
+      totalModulos++;
+      localStorage.setItem('liroy_total_modulos', totalModulos.toString());
+      pobladorSelectsModulos();
+      renderizarModulosNormales();
+      renderizarLeaderboards();
+      renderizarOwnerModulosToggle();
+      alert(`¡Módulo ${totalModulos} agregado con éxito!`);
+    }
+
+    function generarNuevaClaveCertificadoOwner() {
+      let nc = 'CERT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      certificadosClavesUsadas.push(nc);
+      localStorage.setItem('liroy_cert_claves_usadas', JSON.stringify(certificadosClavesUsadas));
+      alert(`🔑 Clave única de certificado generada: ${nc}`);
+    }
+
+    function cambiarClaveOwner() {
+      const v = document.getElementById('input-new-owner-pass').value;
+      if(v) { claveOwnerGlobal = v; alert('Contraseña de Owner actualizada.'); }
+    }
+    function cambiarClaveCustom() {
+      const v = document.getElementById('input-new-custom-pass').value;
+      if(v) { claveCustomGlobal = v; alert('Contraseña de Clases VIP actualizada.'); }
+    }
+
+    function procesarCertificado() {
+      const code = document.getElementById('cert-code-input').value.trim();
+      const nombre = document.getElementById('cert-full-name').value.trim();
+      if(!code || !nombre) { alert("Completa los campos."); return; }
+      if(certificadosClavesUsadas.includes(code)) {
+        certificadosClavesUsadas = certificadosClavesUsadas.filter(c => c !== code);
+        localStorage.setItem('liroy_cert_claves_usadas', JSON.stringify(certificadosClavesUsadas));
+        document.getElementById('cert-announcement-box').style.display = 'block';
+      } else alert("❌ Clave inválida o ya utilizada (es de un solo uso).");
+    }
+  </script>
+</body>
+</html>
